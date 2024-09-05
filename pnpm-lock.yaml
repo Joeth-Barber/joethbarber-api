@@ -25,6 +25,9 @@ dependencies:
     version: 7.8.1
 
 devDependencies:
+  '@faker-js/faker':
+    specifier: ^9.0.0
+    version: 9.0.0
   '@nestjs/cli':
     specifier: ^10.0.0
     version: 10.4.5(@swc/core@1.7.23)
@@ -364,6 +367,11 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@faker-js/faker@9.0.0:
+    resolution: {integrity: sha512-dTDHJSmz6c1OJ6HO7jiUiIb4sB20Dlkb3pxYsKm0qTXm2Bmj97rlXIhlvaFsW2rvCi+OLlwKLVSS6ZxFUVZvjQ==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+    dev: true
 
   /@isaacs/cliui@8.0.2:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
