@@ -16,7 +16,7 @@ export interface ClientProps {
   billingDay: number; // dia do mês. Ex: 10
   payments: Payment[];
   bookings: Booking[];
-  address: Address;
+  address: Address | null;
   createdAt: Date;
   updatedAt?: Date | null;
 }
@@ -102,7 +102,7 @@ export class Client extends Entity<ClientProps> {
     return this.props.address;
   }
 
-  set address(address: Address) {
+  set address(address: Address | null) {
     this.props.address = address;
     this.touch();
   }

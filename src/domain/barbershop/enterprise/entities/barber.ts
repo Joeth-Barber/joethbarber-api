@@ -7,7 +7,7 @@ export interface BarberProps {
   fullName: string;
   email: string;
   password: string;
-  workSchedule: WorkSchedule;
+  workSchedule: WorkSchedule | null;
   createdAt: Date;
   updatedAt?: Date | null;
 }
@@ -33,6 +33,15 @@ export class Barber extends Entity<BarberProps> {
 
   set password(password: string) {
     this.props.password = password;
+    this.touch();
+  }
+
+  get workSchedule() {
+    return this.props.workSchedule;
+  }
+
+  set workSchedule(workSchedule: WorkSchedule | null) {
+    this.props.workSchedule = workSchedule;
     this.touch();
   }
 
