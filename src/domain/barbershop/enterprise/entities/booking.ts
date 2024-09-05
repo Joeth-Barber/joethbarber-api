@@ -6,8 +6,7 @@ import { Service } from "./service";
 
 export interface BookingProps {
   clientId: UniqueEntityId;
-  startTime: Date;
-  endTime: Date;
+  date: Date;
   totalPrice: string;
   description: string;
   services: Service[];
@@ -21,21 +20,12 @@ export class Booking extends Entity<BookingProps> {
     return this.props.clientId;
   }
 
-  get startTime() {
-    return this.props.startTime;
+  get date() {
+    return this.props.date;
   }
 
-  set startTime(startTime: Date) {
-    this.props.startTime = startTime;
-    this.touch();
-  }
-
-  get endTime() {
-    return this.props.endTime;
-  }
-
-  set endTime(endTime: Date) {
-    this.props.endTime = endTime;
+  set date(date: Date) {
+    this.props.date = date;
     this.touch();
   }
 
