@@ -1,8 +1,15 @@
+import { PaginationParams } from "@/core/repositories/pagination-params";
 import { ClientsRepository } from "@/domain/barbershop/application/repositories/clients-repository";
 import { Client } from "@/domain/barbershop/enterprise/entities/client";
 
 export class InMemoryClientsRepository implements ClientsRepository {
   public items: Client[] = [];
+
+  async findMany({ page }: PaginationParams) {
+    const clients = this.items.slice((page - 1) * 10, page * 10);
+
+    return clients;
+  }
 
   async delete(client: Client) {
     const itemIndex = this.items.findIndex((item) => item.id === client.id);

@@ -1,6 +1,8 @@
+import { PaginationParams } from "@/core/repositories/pagination-params";
 import { Client } from "../../enterprise/entities/client";
 
 export abstract class ClientsRepository {
+  abstract findMany(params: PaginationParams): Promise<Client[]>;
   abstract delete(client: Client): Promise<void>;
   abstract findById(id: string): Promise<Client | null>;
   abstract findByPhone(phone: string): Promise<Client | null>;
