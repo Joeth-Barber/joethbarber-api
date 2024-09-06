@@ -6,8 +6,8 @@ import { HashGenerator } from "../../cryptography/hash-generator";
 import { EmailAlreadyExistsError } from "@/core/errors/email-already-exists";
 import { CpfAlreadyExistsError } from "@/core/errors/cpf-already-exists";
 import { PhoneAlreadyExistsError } from "@/core/errors/phone-already-exists";
-import { ClientNotFoundError } from "@/core/errors/client-not-found";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 
 interface UpdateClientUseCaseRequest {
   clientId: UniqueEntityId;
@@ -20,7 +20,10 @@ interface UpdateClientUseCaseRequest {
 }
 
 type UpdateClientUseCaseResponse = Either<
-  EmailAlreadyExistsError | PhoneAlreadyExistsError | CpfAlreadyExistsError,
+  | ResourceNotFoundError
+  | EmailAlreadyExistsError
+  | PhoneAlreadyExistsError
+  | CpfAlreadyExistsError,
   { client: Client }
 >;
 
@@ -55,7 +58,7 @@ export class UpdateClientUseCase {
     const client = await this.clientsRepository.findById(clientId.toString());
 
     if (!client) {
-      return left(new ClientNotFoundError());
+      return left(new ResourceNotFoundError());
     }
 
     const password_hash = await this.hashGenerator.hash(password);

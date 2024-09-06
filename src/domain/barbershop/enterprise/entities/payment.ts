@@ -6,7 +6,7 @@ import { Optional } from "@/core/types/optional";
 
 export interface PaymentProps {
   clientId: UniqueEntityId;
-  status: "COMPLETED" | "PENDING" | "FAILED";
+  status: "COMPLETED" | "PENDING";
   paymentDate: Date;
   bookings: Booking[];
   products: Product[];
@@ -23,7 +23,7 @@ export class Payment extends Entity<PaymentProps> {
     return this.props.status;
   }
 
-  set status(status: "COMPLETED" | "PENDING" | "FAILED") {
+  set status(status: "COMPLETED" | "PENDING") {
     this.props.status = status;
     this.touch();
   }

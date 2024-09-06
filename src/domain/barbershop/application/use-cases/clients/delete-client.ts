@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { ClientsRepository } from "../../repositories/clients-repository";
 import { Either, left, right } from "@/core/either";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
-import { ClientNotFoundError } from "@/core/errors/client-not-found";
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 
 interface DeleteClientUseCaseRequest {
   clientId: UniqueEntityId;
 }
 
-type DeleteClientUseCaseResponse = Either<ClientNotFoundError, {}>;
+type DeleteClientUseCaseResponse = Either<ResourceNotFoundError, {}>;
 
 @Injectable()
 export class DeleteClientUseCase {
@@ -20,7 +20,7 @@ export class DeleteClientUseCase {
     const client = await this.clientsRepository.findById(clientId.toString());
 
     if (!client) {
-      return left(new ClientNotFoundError());
+      return left(new ResourceNotFoundError());
     }
 
     await this.clientsRepository.delete(client);

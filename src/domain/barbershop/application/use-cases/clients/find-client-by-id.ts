@@ -3,14 +3,14 @@ import { ClientsRepository } from "../../repositories/clients-repository";
 import { Either, left, right } from "@/core/either";
 import { Client } from "@/domain/barbershop/enterprise/entities/client";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
-import { ClientNotFoundError } from "@/core/errors/client-not-found";
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 
 export interface FindClientByIdUseCaseRequest {
   clientId: UniqueEntityId;
 }
 
 type FindClientByIdUseCaseResponse = Either<
-  ClientNotFoundError,
+  ResourceNotFoundError,
   { client: Client }
 >;
 
@@ -24,7 +24,7 @@ export class FindClientByIdUseCase {
     const client = await this.clientsRepository.findById(clientId.toString());
 
     if (!client) {
-      return left(new ClientNotFoundError());
+      return left(new ResourceNotFoundError());
     }
 
     return right({

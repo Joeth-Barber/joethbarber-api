@@ -2,9 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { ClientsRepository } from "../../repositories/clients-repository";
 import { Either, left, right } from "@/core/either";
 import { Address } from "../../../enterprise/entities/address";
-import { ClientNotFoundError } from "@/core/errors/client-not-found";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { ClientsAddressesRepository } from "../../repositories/clients-addresses-repository";
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 
 interface CreateClientAddressUseCaseRequest {
   clientId: UniqueEntityId;
@@ -17,7 +17,7 @@ interface CreateClientAddressUseCaseRequest {
 }
 
 type CreateClientAddressUseCaseResponse = Either<
-  ClientNotFoundError,
+  ResourceNotFoundError,
   { clientAddress: Address }
 >;
 
@@ -40,7 +40,7 @@ export class CreateClientAddressUseCase {
     const client = await this.clientsRepository.findById(clientId.toString());
 
     if (!client) {
-      return left(new ClientNotFoundError());
+      return left(new ResourceNotFoundError());
     }
 
     const clientAddress = Address.create({
