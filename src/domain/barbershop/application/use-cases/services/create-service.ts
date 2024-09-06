@@ -1,5 +1,4 @@
 import { Either, right } from "@/core/either";
-import { EmailAlreadyExistsError } from "@/core/errors/email-already-exists";
 import { Injectable } from "@nestjs/common";
 import { Service } from "../../../enterprise/entities/service";
 import { ServicesRepository } from "../../repositories/services-repository";
@@ -9,10 +8,7 @@ export interface CreateServiceUseCaseRequest {
   price: string;
 }
 
-type CreateServiceUseCaseResponse = Either<
-  EmailAlreadyExistsError,
-  { service: Service }
->;
+type CreateServiceUseCaseResponse = Either<null, { service: Service }>;
 
 @Injectable()
 export class CreateServiceUseCase {

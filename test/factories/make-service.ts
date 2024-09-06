@@ -12,7 +12,7 @@ export function makeService(
   const service = Service.create(
     {
       name: faker.commerce.product(),
-      price: faker.commerce.price(),
+      price: faker.commerce.productName(),
       ...override,
     },
     id
