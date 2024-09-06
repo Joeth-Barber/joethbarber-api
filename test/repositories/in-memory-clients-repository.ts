@@ -4,7 +4,17 @@ import { Client } from "@/domain/barbershop/enterprise/entities/client";
 export class InMemoryClientsRepository implements ClientsRepository {
   public items: Client[] = [];
 
-  async findByPhone(phone: string): Promise<Client | null> {
+  async findById(id: string) {
+    const client = this.items.find((item) => item.id.toString() === id);
+
+    if (!client) {
+      return null;
+    }
+
+    return client;
+  }
+
+  async findByPhone(phone: string) {
     const client = this.items.find((item) => item.phone === phone);
 
     if (!client) {
@@ -14,7 +24,7 @@ export class InMemoryClientsRepository implements ClientsRepository {
     return client;
   }
 
-  async findByCpf(cpf: string): Promise<Client | null> {
+  async findByCpf(cpf: string) {
     const client = this.items.find((item) => item.cpf.value === cpf);
 
     if (!client) {
