@@ -5,6 +5,12 @@ import { Client } from "@/domain/barbershop/enterprise/entities/client";
 export class InMemoryClientsRepository implements ClientsRepository {
   public items: Client[] = [];
 
+  async save(client: Client) {
+    const itemIndex = this.items.findIndex((item) => item.id === client.id);
+
+    this.items[itemIndex] = client;
+  }
+
   async findMany({ page }: PaginationParams) {
     const clients = this.items.slice((page - 1) * 10, page * 10);
 
