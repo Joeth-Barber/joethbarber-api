@@ -1,9 +1,9 @@
 import { Either, left, right } from "@/core/either";
 import { EmailAlreadyExistsError } from "@/core/errors/email-already-exists";
 import { Injectable } from "@nestjs/common";
-import { Barber } from "../../enterprise/entities/barber";
-import { HashGenerator } from "../cryptography/hash-generator";
-import { BarbersRepository } from "../repositories/barbers-repository";
+import { Barber } from "../../../enterprise/entities/barber";
+import { HashGenerator } from "../../cryptography/hash-generator";
+import { BarbersRepository } from "../../repositories/barbers-repository";
 
 export interface CreateBarberUseCaseRequest {
   fullName: string;

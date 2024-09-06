@@ -2,7 +2,7 @@ import { InMemoryClientsRepository } from "test/repositories/in-memory-clients-r
 import { CreateClientUseCase } from "./create-client";
 import { FakeHasher } from "test/cryptography/fake-hasher";
 import { makeClient } from "test/factories/make-client";
-import { CPF } from "../../enterprise/entities/value-objects/cpf";
+import { CPF } from "../../../enterprise/entities/value-objects/cpf";
 
 let inMemoryClientsRepository: InMemoryClientsRepository;
 let fakeHasher: FakeHasher;

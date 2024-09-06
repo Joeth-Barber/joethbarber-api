@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { ClientsRepository } from "../repositories/clients-repository";
+import { ClientsRepository } from "../../repositories/clients-repository";
 import { Either, left, right } from "@/core/either";
-import { Client } from "../../enterprise/entities/client";
-import { CPF } from "../../enterprise/entities/value-objects/cpf";
-import { HashGenerator } from "../cryptography/hash-generator";
+import { Client } from "../../../enterprise/entities/client";
+import { CPF } from "../../../enterprise/entities/value-objects/cpf";
+import { HashGenerator } from "../../cryptography/hash-generator";
 import { EmailAlreadyExistsError } from "@/core/errors/email-already-exists";
 import { CpfAlreadyExistsError } from "@/core/errors/cpf-already-exists";
 import { PhoneAlreadyExistsError } from "@/core/errors/phone-already-exists";

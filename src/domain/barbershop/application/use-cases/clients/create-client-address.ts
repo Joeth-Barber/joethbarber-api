@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { ClientsRepository } from "../repositories/clients-repository";
+import { ClientsRepository } from "../../repositories/clients-repository";
 import { Either, left, right } from "@/core/either";
-import { Address } from "../../enterprise/entities/address";
+import { Address } from "../../../enterprise/entities/address";
 import { ClientNotFoundError } from "@/core/errors/client-not-found";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
-import { ClientsAddressesRepository } from "../repositories/clients-addresses-repository";
+import { ClientsAddressesRepository } from "../../repositories/clients-addresses-repository";
 
 interface CreateClientAddressUseCaseRequest {
   clientId: UniqueEntityId;
