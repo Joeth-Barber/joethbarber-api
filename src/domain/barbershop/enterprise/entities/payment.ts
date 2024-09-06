@@ -1,10 +1,15 @@
 import { Entity } from "src/core/entities/entity";
 import { UniqueEntityId } from "src/core/entities/unique-entity-id";
+import { Booking } from "./booking";
+import { Product } from "./product";
+import { Optional } from "@/core/types/optional";
 
 export interface PaymentProps {
   clientId: UniqueEntityId;
   status: "COMPLETED" | "PENDING" | "FAILED";
   paymentDate: Date;
+  bookings: Booking[];
+  products: Product[];
   amount: string;
   updatedAt?: Date | null;
 }
@@ -32,6 +37,24 @@ export class Payment extends Entity<PaymentProps> {
     this.touch();
   }
 
+  get bookings() {
+    return this.props.bookings;
+  }
+
+  set bookings(bookings: Booking[]) {
+    this.props.bookings = bookings;
+    this.touch();
+  }
+
+  get products() {
+    return this.props.products;
+  }
+
+  set products(products: Product[]) {
+    this.props.products = products;
+    this.touch();
+  }
+
   get amount() {
     return this.props.amount;
   }
@@ -49,10 +72,15 @@ export class Payment extends Entity<PaymentProps> {
     this.props.updatedAt = new Date();
   }
 
-  static create(props: PaymentProps, id?: UniqueEntityId) {
+  static create(
+    props: Optional<PaymentProps, "bookings" | "products">,
+    id?: UniqueEntityId
+  ) {
     const payment = new Payment(
       {
         ...props,
+        bookings: props.bookings ?? [],
+        products: props.products ?? [],
       },
       id
     );
