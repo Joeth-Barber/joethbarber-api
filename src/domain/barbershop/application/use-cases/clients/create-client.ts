@@ -57,14 +57,13 @@ export class CreateClientUseCase {
       return left(new EmailAlreadyExistsError());
     }
 
-    const cpf_hash = await this.hashGenerator.hash(cpf.value);
     const password_hash = await this.hashGenerator.hash(password);
 
     const client = Client.create({
       fullName,
       nickName,
       phone,
-      cpf: CPF.create(cpf_hash),
+      cpf,
       email,
       password: password_hash,
       billingDay,

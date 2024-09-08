@@ -7,7 +7,7 @@ import { Service } from "./service";
 export interface BookingProps {
   clientId: UniqueEntityId;
   date: Date;
-  totalPrice: string;
+  totalPrice: number;
   description: string;
   services: Service[];
   products: Product[];
@@ -33,7 +33,7 @@ export class Booking extends Entity<BookingProps> {
     return this.props.totalPrice;
   }
 
-  set totalPrice(totalPrice: string) {
+  set totalPrice(totalPrice: number) {
     this.props.totalPrice = totalPrice;
     this.touch();
   }

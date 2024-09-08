@@ -10,7 +10,7 @@ export interface PaymentProps {
   paymentDate: Date;
   bookings: Booking[];
   products: Product[];
-  amount: string;
+  amount: number;
   updatedAt?: Date | null;
 }
 
@@ -59,7 +59,7 @@ export class Payment extends Entity<PaymentProps> {
     return this.props.amount;
   }
 
-  set amount(amount: string) {
+  set amount(amount: number) {
     this.props.amount = amount;
     this.touch();
   }
