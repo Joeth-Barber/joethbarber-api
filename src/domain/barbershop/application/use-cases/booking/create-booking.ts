@@ -16,6 +16,7 @@ interface CreateBookingUseCaseRequest {
   description: string;
   products: Product[];
   services: Service[];
+  status: "PENDING" | "COMPLETED";
 }
 
 type CreateBookingUseCaseResponse = Either<
@@ -36,6 +37,7 @@ export class CreateBookingUseCase {
     description,
     products,
     services,
+    status,
   }: CreateBookingUseCaseRequest): Promise<CreateBookingUseCaseResponse> {
     const client = await this.clientsRepository.findById(clientId.toString());
 
@@ -60,6 +62,7 @@ export class CreateBookingUseCase {
       description,
       products,
       services,
+      status,
     });
 
     await this.bookingsRepository.create(booking);

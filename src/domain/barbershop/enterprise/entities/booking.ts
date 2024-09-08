@@ -11,6 +11,7 @@ export interface BookingProps {
   description: string;
   services: Service[];
   products: Product[];
+  status: "PENDING" | "COMPLETED";
   createdAt: Date;
   updatedAt?: Date | null;
 }
@@ -65,6 +66,15 @@ export class Booking extends Entity<BookingProps> {
     this.touch();
   }
 
+  get status() {
+    return this.props.status;
+  }
+
+  set status(status: "PENDING" | "COMPLETED") {
+    this.props.status = status;
+    this.touch();
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -80,7 +90,7 @@ export class Booking extends Entity<BookingProps> {
   static create(
     props: Optional<
       BookingProps,
-      "services" | "products" | "description" | "createdAt"
+      "services" | "products" | "status" | "description" | "createdAt"
     >,
     id?: UniqueEntityId
   ) {
@@ -90,6 +100,7 @@ export class Booking extends Entity<BookingProps> {
         services: props.services ?? [],
         products: props.products ?? [],
         description: props.description ?? "",
+        status: props.status ?? "PENDING",
         createdAt: props.createdAt ?? new Date(),
       },
       id
