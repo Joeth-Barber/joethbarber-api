@@ -12,7 +12,7 @@ export function makeProduct(
   const product = Product.create(
     {
       name: faker.commerce.product(),
-      price: faker.commerce.productName(),
+      price: faker.number.float(),
       quantity: faker.number.int(),
       ...override,
     },

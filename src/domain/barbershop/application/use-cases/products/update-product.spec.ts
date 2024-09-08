@@ -17,7 +17,7 @@ describe("Update Product", () => {
       makeProduct(
         {
           name: "Cerveja Skol",
-          price: "R$ 5,00",
+          price: 5.0,
           quantity: 10,
         },
         new UniqueEntityId("product-01")
@@ -28,7 +28,7 @@ describe("Update Product", () => {
     const result = await sut.execute({
       productId: new UniqueEntityId("product-01"),
       name: "Cerveja Brahma",
-      price: "R$ 5,00",
+      price: 5.0,
       quantity: 10,
     });
 
@@ -36,7 +36,7 @@ describe("Update Product", () => {
     expect(result.value).toEqual({
       product: expect.objectContaining({
         name: "Cerveja Brahma",
-        price: "R$ 5,00",
+        price: 5.0,
         quantity: 10,
       }),
     });

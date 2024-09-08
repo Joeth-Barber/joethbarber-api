@@ -3,7 +3,7 @@ import { UniqueEntityId } from "src/core/entities/unique-entity-id";
 
 export interface ProductProps {
   name: string;
-  price: string;
+  price: number;
   quantity: number;
   updatedAt?: Date | null;
 }
@@ -22,7 +22,7 @@ export class Product extends Entity<ProductProps> {
     return this.props.price;
   }
 
-  set price(price: string) {
+  set price(price: number) {
     this.props.price = price;
     this.touch;
   }

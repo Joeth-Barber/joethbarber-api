@@ -8,7 +8,7 @@ import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 interface UpdateServiceUseCaseRequest {
   serviceId: UniqueEntityId;
   name: string;
-  price: string;
+  price: number;
 }
 
 type UpdateServiceUseCaseResponse = Either<

@@ -5,7 +5,7 @@ import { ProductsRepository } from "../../repositories/products-repository";
 
 export interface CreateProductUseCaseRequest {
   name: string;
-  price: string;
+  price: number;
   quantity: number;
 }
 

@@ -1,32 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { ProductsRepository } from "../../repositories/products-repository";
 import { Either, left, right } from "@/core/either";
-import { Product } from "../../../enterprise/entities/product";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 
-interface UpdateProductUseCaseRequest {
+interface DeleteProductUseCaseRequest {
   productId: UniqueEntityId;
-  name: string;
-  price: number;
-  quantity: number;
 }
 
-type UpdateProductUseCaseResponse = Either<
-  ResourceNotFoundError,
-  { product: Product }
->;
+type DeleteProductUseCaseResponse = Either<ResourceNotFoundError, {}>;
 
 @Injectable()
-export class UpdateProductUseCase {
+export class DeleteProductUseCase {
   constructor(private productsRepository: ProductsRepository) {}
 
   async execute({
     productId,
-    name,
-    price,
-    quantity,
-  }: UpdateProductUseCaseRequest): Promise<UpdateProductUseCaseResponse> {
+  }: DeleteProductUseCaseRequest): Promise<DeleteProductUseCaseResponse> {
     const product = await this.productsRepository.findById(
       productId.toString()
     );
@@ -35,12 +25,8 @@ export class UpdateProductUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    product.name = name;
-    product.price = price;
-    product.quantity = quantity;
+    await this.productsRepository.delete(product);
 
-    await this.productsRepository.save(product);
-
-    return right({ product });
+    return right({});
   }
 }

@@ -17,7 +17,7 @@ describe("Update Service", () => {
       makeService(
         {
           name: "Corte de cabelo",
-          price: "R$ 35,00",
+          price: 35.0,
         },
         new UniqueEntityId("service-01")
       )
@@ -27,14 +27,14 @@ describe("Update Service", () => {
     const result = await sut.execute({
       serviceId: new UniqueEntityId("service-01"),
       name: "Corte de cabelo",
-      price: "R$ 25,00",
+      price: 25.0,
     });
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toEqual({
       service: expect.objectContaining({
         name: "Corte de cabelo",
-        price: "R$ 25,00",
+        price: 25.0,
       }),
     });
   });

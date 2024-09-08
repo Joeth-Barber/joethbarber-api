@@ -5,7 +5,7 @@ import { ServicesRepository } from "../../repositories/services-repository";
 
 export interface CreateServiceUseCaseRequest {
   name: string;
-  price: string;
+  price: number;
 }
 
 type CreateServiceUseCaseResponse = Either<null, { service: Service }>;
