@@ -11,7 +11,7 @@ export interface BookingProps {
   description: string;
   services: Service[];
   products: Product[];
-  status: "PENDING" | "COMPLETED";
+  status: "PENDING" | "COMPLETED" | "CANCELED";
   createdAt: Date;
   updatedAt?: Date | null;
 }
@@ -70,7 +70,7 @@ export class Booking extends Entity<BookingProps> {
     return this.props.status;
   }
 
-  set status(status: "PENDING" | "COMPLETED") {
+  set status(status: "PENDING" | "COMPLETED" | "CANCELED") {
     this.props.status = status;
     this.touch();
   }

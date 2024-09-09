@@ -29,7 +29,7 @@ export class InMemoryBookingsRepository implements BookingsRepository {
     return bookings;
   }
 
-  async delete(booking: Booking) {
+  async cancel(booking: Booking) {
     const itemIndex = this.items.findIndex((item) => item.id === booking.id);
 
     this.items.splice(itemIndex, 1);

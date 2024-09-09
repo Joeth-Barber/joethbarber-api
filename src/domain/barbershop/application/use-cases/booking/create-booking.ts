@@ -16,7 +16,7 @@ interface CreateBookingUseCaseRequest {
   description: string;
   products: Product[];
   services: Service[];
-  status: "PENDING" | "COMPLETED";
+  status: "PENDING" | "COMPLETED" | "CANCELED";
 }
 
 type CreateBookingUseCaseResponse = Either<
