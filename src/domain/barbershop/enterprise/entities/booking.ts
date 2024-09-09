@@ -6,6 +6,7 @@ import { Service } from "./service";
 
 export interface BookingProps {
   clientId: UniqueEntityId;
+  workScheduleId: UniqueEntityId;
   date: Date;
   totalPrice: number;
   description: string;
@@ -19,6 +20,10 @@ export interface BookingProps {
 export class Booking extends Entity<BookingProps> {
   get clientId() {
     return this.props.clientId;
+  }
+
+  get workScheduleId() {
+    return this.props.workScheduleId;
   }
 
   get date() {
