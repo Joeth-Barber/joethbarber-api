@@ -18,7 +18,7 @@ describe("Cancel Booking", () => {
   });
 
   it("should be able to cancel a booking", async () => {
-    const date = new Date(2024, 8, 10, 14);
+    const date = new Date("2024-09-10T10:00:00");
     vi.setSystemTime(date);
 
     const booking = makeBooking(
@@ -41,7 +41,7 @@ describe("Cancel Booking", () => {
   });
 
   it("should not be able to cancel a booking after the 3 hours limit", async () => {
-    const date = new Date(2024, 8, 10, 14);
+    const date = new Date("2024-09-10T14:00:00");
     vi.setSystemTime(date);
 
     const booking = makeBooking(

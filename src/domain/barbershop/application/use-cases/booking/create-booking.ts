@@ -8,9 +8,12 @@ import { Service } from "@/domain/barbershop/enterprise/entities/service";
 import { BookingsRepository } from "../../repositories/bookings-repository";
 import { ClientsRepository } from "../../repositories/clients-repository";
 import { BookingDateOverlappingError } from "@/core/errors/booking-date-overlapping";
+import { WorkSchedulesRepository } from "../../repositories/work-schedules-repository";
+import { format } from "date-fns";
 
 interface CreateBookingUseCaseRequest {
   clientId: UniqueEntityId;
+  workScheduleId: UniqueEntityId;
   date: Date;
   totalPrice: number;
   description: string;
@@ -28,11 +31,13 @@ type CreateBookingUseCaseResponse = Either<
 export class CreateBookingUseCase {
   constructor(
     private bookingsRepository: BookingsRepository,
-    private clientsRepository: ClientsRepository
+    private clientsRepository: ClientsRepository,
+    private workSchedulesRepository: WorkSchedulesRepository
   ) {}
 
   async execute({
     clientId,
+    workScheduleId,
     date,
     description,
     products,
@@ -45,11 +50,51 @@ export class CreateBookingUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const isBookingOverlapping = await this.bookingsRepository.findByDate(date);
+    const bookingStart = format(date, "HH:mm");
+    const bookingEnd = format(
+      new Date(date.getTime() + 60 * 60 * 1000),
+      "HH:mm"
+    );
 
-    if (isBookingOverlapping) {
+    const workSchedule = await this.workSchedulesRepository.findById(
+      workScheduleId.toString()
+    );
+
+    if (!workSchedule) {
+      return left(new ResourceNotFoundError());
+    }
+
+    const workDay = workSchedule.workDays.find(
+      (day) => day.dayOfWeek === date.getDay()
+    );
+
+    if (!workDay || !workDay.availableHours) {
+      return left(new ResourceNotFoundError());
+    }
+
+    const existingBooking =
+      await this.bookingsRepository.findOverlappingBooking(
+        workScheduleId,
+        date
+      );
+
+    if (existingBooking) {
       return left(new BookingDateOverlappingError());
     }
+
+    const isAvailable = workDay.availableHours.some(
+      (hour) => hour === bookingStart
+    );
+
+    if (!isAvailable) {
+      return left(new BookingDateOverlappingError());
+    }
+
+    workDay.availableHours = workDay.availableHours.filter(
+      (hour) => hour !== bookingStart
+    );
+
+    await this.workSchedulesRepository.save(workSchedule);
 
     const calculatedTotalPrice =
       services.reduce((sum, service) => sum + service.price, 0) +
@@ -57,6 +102,7 @@ export class CreateBookingUseCase {
 
     const booking = Booking.create({
       clientId,
+      workScheduleId,
       date,
       totalPrice: calculatedTotalPrice,
       description,
@@ -66,8 +112,6 @@ export class CreateBookingUseCase {
     });
 
     await this.bookingsRepository.create(booking);
-
-    // TODO: o totalPrice dessa booking deve ser adicionado ao campo AMOUNT da entity Payment
 
     return right({ booking });
   }
