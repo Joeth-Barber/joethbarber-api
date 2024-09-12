@@ -7,10 +7,10 @@ import { Optional } from "@/core/types/optional";
 export interface PaymentProps {
   clientId: UniqueEntityId;
   status: "COMPLETED" | "PENDING";
-  paymentDate: Date;
   bookings: Booking[];
   products: Product[];
   amount: number;
+  paymentDate: Date | null;
   updatedAt?: Date | null;
 }
 
@@ -32,7 +32,7 @@ export class Payment extends Entity<PaymentProps> {
     return this.props.paymentDate;
   }
 
-  set paymentDate(paymentDate: Date) {
+  set paymentDate(paymentDate: Date | null) {
     this.props.paymentDate = paymentDate;
     this.touch();
   }
@@ -73,7 +73,10 @@ export class Payment extends Entity<PaymentProps> {
   }
 
   static create(
-    props: Optional<PaymentProps, "bookings" | "products">,
+    props: Optional<
+      PaymentProps,
+      "bookings" | "products" | "status" | "paymentDate"
+    >,
     id?: UniqueEntityId
   ) {
     const payment = new Payment(
@@ -81,6 +84,8 @@ export class Payment extends Entity<PaymentProps> {
         ...props,
         bookings: props.bookings ?? [],
         products: props.products ?? [],
+        status: props.status ?? "PENDING",
+        paymentDate: props.paymentDate ?? null,
       },
       id
     );
