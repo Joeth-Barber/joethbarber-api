@@ -21,6 +21,7 @@ export function makeBooking(
   const booking = Booking.create(
     {
       clientId: new UniqueEntityId(),
+      workScheduleId: new UniqueEntityId(),
       date: faker.date.future(),
       totalPrice,
       ...override,
