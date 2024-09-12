@@ -86,11 +86,6 @@ describe("Create Booking", () => {
     });
 
     const result = await sut.execute(booking);
-    console.log(result.value);
-    console.log(
-      "Available hours after booking",
-      inMemoryWorkSchedulesRepository.items[0].workDays[0].availableHours
-    );
 
     expect(inMemoryBookingsRepository.items).toHaveLength(1);
 

@@ -9,7 +9,7 @@ let inMemoryWorkSchedulesRepository: InMemoryWorkSchedulesRepository;
 let inMemoryBarbersRepository: InMemoryBarbersRepository;
 let sut: FetchAvailableDaysAndHoursUseCase;
 
-describe("Create Work Schedule", () => {
+describe("List available days and it hours", () => {
   beforeEach(() => {
     inMemoryWorkSchedulesRepository = new InMemoryWorkSchedulesRepository();
     inMemoryBarbersRepository = new InMemoryBarbersRepository();
