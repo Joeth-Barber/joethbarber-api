@@ -1,5 +1,4 @@
 import { InMemoryPaymentsRepository } from "test/repositories/in-memory-payments-repository";
-import { CreatePaymentUseCase } from "./create-payment";
 import { InMemoryClientsRepository } from "test/repositories/in-memory-clients-repository";
 import { makePayment } from "test/factories/make-payment";
 import { makeClient } from "test/factories/make-client";
@@ -9,20 +8,22 @@ import { makeWorkSchedule } from "test/factories/make-work-schedule";
 import { InMemoryBookingsRepository } from "test/repositories/in-memory-bookings-repository";
 import { makeBooking } from "test/factories/make-booking";
 import { makeService } from "test/factories/make-service";
+import { FetchPaymentsByClientIdUseCase } from "./fetch-payments-by-client-id";
+import { makeProduct } from "test/factories/make-product";
 
 let inMemoryPaymentsRepository: InMemoryPaymentsRepository;
 let inMemoryClientsRepository: InMemoryClientsRepository;
 let inMemoryBookingsRepository: InMemoryBookingsRepository;
 let inMemoryWorkSchedulesRepository: InMemoryWorkSchedulesRepository;
-let sut: CreatePaymentUseCase;
+let sut: FetchPaymentsByClientIdUseCase;
 
-describe("Create Payment", () => {
+describe("Fetch Payments By Client Id", () => {
   beforeEach(() => {
     inMemoryPaymentsRepository = new InMemoryPaymentsRepository();
     inMemoryClientsRepository = new InMemoryClientsRepository();
     inMemoryBookingsRepository = new InMemoryBookingsRepository();
     inMemoryWorkSchedulesRepository = new InMemoryWorkSchedulesRepository();
-    sut = new CreatePaymentUseCase(
+    sut = new FetchPaymentsByClientIdUseCase(
       inMemoryPaymentsRepository,
       inMemoryClientsRepository
     );
@@ -33,7 +34,7 @@ describe("Create Payment", () => {
     vi.useRealTimers();
   });
 
-  it("should be able to create a new payment", async () => {
+  it("should be able to fetch all client payments by id", async () => {
     await inMemoryClientsRepository.create(
       makeClient({}, new UniqueEntityId("client-01"))
     );
@@ -62,40 +63,75 @@ describe("Create Payment", () => {
     );
     expect(inMemoryWorkSchedulesRepository.items).toHaveLength(1);
 
-    const payment = makePayment({
+    await inMemoryPaymentsRepository.create(
+      makePayment({
+        clientId: new UniqueEntityId("client-01"),
+        bookings: [
+          makeBooking(
+            {
+              clientId: new UniqueEntityId("client-01"),
+              workScheduleId: new UniqueEntityId("work-schedule-01"),
+              services: [
+                makeService({
+                  name: "Corte de cabelo",
+                  price: 25,
+                }),
+              ],
+            },
+            new UniqueEntityId("booking-01")
+          ),
+        ],
+        status: "COMPLETED",
+        paymentDate: new Date("2024-09-10T14:00:00"),
+      })
+    );
+
+    await inMemoryPaymentsRepository.create(
+      makePayment({
+        clientId: new UniqueEntityId("client-01"),
+        products: [
+          makeProduct({
+            name: "Coca-cola 400ml",
+            price: 5,
+          }),
+        ],
+        status: "COMPLETED",
+        paymentDate: new Date("2024-05-22T17:00:00"),
+      })
+    );
+
+    expect(inMemoryPaymentsRepository.items).toHaveLength(2);
+
+    const result = await sut.execute({
+      page: 1,
       clientId: new UniqueEntityId("client-01"),
-      bookings: [
-        makeBooking(
-          {
-            clientId: new UniqueEntityId("client-01"),
-            workScheduleId: new UniqueEntityId("work-schedule-01"),
-            services: [
-              makeService({
-                name: "Corte de cabelo",
-                price: 25,
-              }),
-              makeService({
-                name: "Sobrancelha",
-                price: 5,
-              }),
-              makeService({
-                name: "Barba",
-                price: 5,
-              }),
-            ],
-          },
-          new UniqueEntityId("booking-01")
-        ),
-      ],
-      status: "PENDING",
-      paymentDate: new Date("2024-09-10T14:00:00"),
     });
 
-    const result = await sut.execute(payment);
-
-    expect(inMemoryPaymentsRepository.items).toHaveLength(1);
-
     expect(result.isRight()).toBe(true);
-    expect(inMemoryPaymentsRepository.items[0].amount).toBe(35);
+    expect(result.value).toEqual({
+      payments: expect.any(Array),
+    });
+  });
+
+  it("should be able to fetch paginated list of client payments", async () => {
+    await inMemoryClientsRepository.create(
+      makeClient({}, new UniqueEntityId("client-01"))
+    );
+
+    for (let i = 1; i <= 12; i++) {
+      await inMemoryPaymentsRepository.create(
+        makePayment({ clientId: new UniqueEntityId("client-01"), amount: 50 })
+      );
+    }
+
+    const result = await sut.execute({
+      page: 2,
+      clientId: new UniqueEntityId("client-01"),
+    });
+
+    if (result.isRight()) {
+      const payments = result.value.payments;
+      expect(payments).toHaveLength(2);
+    }
   });
 });
