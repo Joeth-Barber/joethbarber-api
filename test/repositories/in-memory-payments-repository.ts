@@ -4,10 +4,13 @@ import { Payment } from "@/domain/barbershop/enterprise/entities/payment";
 export class InMemoryPaymentsRepository implements PaymentsRepository {
   public items: Payment[] = [];
 
-  async fetchByClientId(
-    { page }: { page: number },
-    id: string
-  ): Promise<Payment[]> {
+  async delete(payment: Payment) {
+    const itemIndex = this.items.findIndex((item) => item.id === payment.id);
+
+    this.items.splice(itemIndex, 1);
+  }
+
+  async fetchByClientId({ page }: { page: number }, id: string) {
     const clientPayments = this.items
       .filter((payment) => payment.clientId.toString() === id)
       .sort((a, b) => {
