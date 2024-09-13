@@ -66,6 +66,7 @@ describe("List available days and it hours", () => {
     const result = await sut.execute({
       workScheduleId: new UniqueEntityId("work-schedule-01"),
     });
+
     expect(result.isRight()).toBe(true);
   });
 });

@@ -11,8 +11,8 @@ export function populateAvailableHours(workDays: WorkDay[]): WorkDay[] {
     const start = new Date(`1970-01-01T${startTime}:00`);
     const end = new Date(`1970-01-01T${endTime}:00`);
 
-    function addHour(time: Date): Date {
-      return new Date(time.getTime() + 60 * 60 * 1000);
+    function addHalfHour(time: Date): Date {
+      return new Date(time.getTime() + 30 * 60 * 1000);
     }
 
     function isDuringBreak(time: Date): boolean {
@@ -24,19 +24,19 @@ export function populateAvailableHours(workDays: WorkDay[]): WorkDay[] {
     }
 
     let currentTime = start;
-    const endHour = new Date(end.getTime() - 60 * 60 * 1000);
+    const endTimeMinus30Min = new Date(end.getTime() - 30 * 60 * 1000);
 
-    while (currentTime <= endHour) {
+    while (currentTime <= endTimeMinus30Min) {
       const currentTimeStr = currentTime.toTimeString().substring(0, 5);
 
       if (!isDuringBreak(currentTime)) {
         availableHours.push(currentTimeStr);
       }
 
-      currentTime = addHour(currentTime);
+      currentTime = addHalfHour(currentTime);
     }
 
-    const endTimeStr = endHour.toTimeString().substring(0, 5);
+    const endTimeStr = endTimeMinus30Min.toTimeString().substring(0, 5);
     if (!isDuringBreak(end) && !availableHours.includes(endTimeStr)) {
       availableHours.push(endTimeStr);
     }

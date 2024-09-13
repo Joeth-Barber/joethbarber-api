@@ -52,7 +52,7 @@ export class CreateBookingUseCase {
 
     const bookingStart = format(date, "HH:mm");
     const bookingEnd = format(
-      new Date(date.getTime() + 60 * 60 * 1000),
+      new Date(date.getTime() + 30 * 60 * 1000),
       "HH:mm"
     );
 
@@ -82,9 +82,9 @@ export class CreateBookingUseCase {
       return left(new BookingDateOverlappingError());
     }
 
-    const isAvailable = workDay.availableHours.some(
-      (hour) => hour === bookingStart
-    );
+    const isAvailable =
+      workDay.availableHours.some((hour) => hour === bookingStart) &&
+      workDay.availableHours.some((hour) => hour === bookingEnd);
 
     if (!isAvailable) {
       return left(new BookingDateOverlappingError());
