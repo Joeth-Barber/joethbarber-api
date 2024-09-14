@@ -5,6 +5,7 @@ import { Address } from "../../../enterprise/entities/address";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { ClientsAddressesRepository } from "../../repositories/clients-addresses-repository";
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
+import { NotAllowedError } from "@/core/errors/not-allowed";
 
 interface CreateClientAddressUseCaseRequest {
   clientId: UniqueEntityId;
@@ -17,7 +18,7 @@ interface CreateClientAddressUseCaseRequest {
 }
 
 type CreateClientAddressUseCaseResponse = Either<
-  ResourceNotFoundError,
+  ResourceNotFoundError | NotAllowedError,
   { clientAddress: Address }
 >;
 

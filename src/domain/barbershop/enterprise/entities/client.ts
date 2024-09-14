@@ -7,6 +7,7 @@ import { Optional } from "src/core/types/optional";
 import { CPF } from "./value-objects/cpf";
 
 export interface ClientProps {
+  role: "CLIENT" | "MENSALIST";
   fullName: string;
   nickName: string;
   phone: string;
@@ -22,6 +23,15 @@ export interface ClientProps {
 }
 
 export class Client extends Entity<ClientProps> {
+  get role() {
+    return this.props.role;
+  }
+
+  set role(role: "CLIENT" | "MENSALIST") {
+    this.props.role = role;
+    this.touch();
+  }
+
   get fullName() {
     return this.props.fullName;
   }
@@ -122,13 +132,14 @@ export class Client extends Entity<ClientProps> {
   static create(
     props: Optional<
       ClientProps,
-      "billingDay" | "payments" | "bookings" | "address" | "createdAt"
+      "role" | "billingDay" | "payments" | "bookings" | "address" | "createdAt"
     >,
     id?: UniqueEntityId
   ) {
     const client = new Client(
       {
         ...props,
+        role: props.role ?? "CLIENT",
         billingDay: props.billingDay ?? 0,
         payments: props.payments ?? [],
         bookings: props.bookings ?? [],

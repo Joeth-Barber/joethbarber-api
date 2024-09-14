@@ -3,12 +3,16 @@ import { ClientsRepository } from "../../repositories/clients-repository";
 import { Either, left, right } from "@/core/either";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
+import { NotAllowedError } from "@/core/errors/not-allowed";
 
 interface DeleteClientUseCaseRequest {
   clientId: UniqueEntityId;
 }
 
-type DeleteClientUseCaseResponse = Either<ResourceNotFoundError, {}>;
+type DeleteClientUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  {}
+>;
 
 @Injectable()
 export class DeleteClientUseCase {

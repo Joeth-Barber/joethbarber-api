@@ -4,6 +4,7 @@ import { Optional } from "src/core/types/optional";
 import { WorkSchedule } from "./work-schedule";
 
 export interface BarberProps {
+  role: "ADMIN";
   fullName: string;
   email: string;
   password: string;
@@ -13,6 +14,10 @@ export interface BarberProps {
 }
 
 export class Barber extends Entity<BarberProps> {
+  get role() {
+    return this.props.role;
+  }
+
   get fullName() {
     return this.props.fullName;
   }
@@ -58,12 +63,13 @@ export class Barber extends Entity<BarberProps> {
   }
 
   static create(
-    props: Optional<BarberProps, "workSchedule" | "createdAt">,
+    props: Optional<BarberProps, "role" | "workSchedule" | "createdAt">,
     id?: UniqueEntityId
   ) {
     const barber = new Barber(
       {
         ...props,
+        role: props.role ?? "ADMIN",
         workSchedule: props.workSchedule ?? null,
         createdAt: props.createdAt ?? new Date(),
       },
