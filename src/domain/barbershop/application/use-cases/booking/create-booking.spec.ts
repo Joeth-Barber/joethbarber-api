@@ -31,7 +31,7 @@ describe("Create Booking", () => {
     vi.useRealTimers();
   });
 
-  it("should be able to create a new booking", async () => {
+  it("should be able to create a new booking 14:30", async () => {
     const date = new Date("2024-09-10T10:00:00");
     vi.setSystemTime(date);
 
@@ -66,7 +66,7 @@ describe("Create Booking", () => {
     const booking = makeBooking({
       clientId: new UniqueEntityId("client-01"),
       workScheduleId: new UniqueEntityId("work-schedule-01"),
-      date: new Date("2024-09-10T14:00:00"),
+      date: new Date("2024-09-10T14:30:00"),
       services: [
         makeService({
           name: "Corte de cabelo",
@@ -86,7 +86,6 @@ describe("Create Booking", () => {
     });
 
     const result = await sut.execute(booking);
-
     expect(inMemoryBookingsRepository.items).toHaveLength(1);
 
     expect(result.isRight()).toBe(true);
@@ -130,23 +129,23 @@ describe("Create Booking", () => {
     );
     expect(inMemoryWorkSchedulesRepository.items).toHaveLength(1);
 
-    await inMemoryBookingsRepository.create(
-      makeBooking({
-        clientId: new UniqueEntityId("client-01"),
-        workScheduleId: new UniqueEntityId("work-schedule-01"),
-        date: new Date("2024-09-10T14:00:00"),
-      })
-    );
+    const booking1 = makeBooking({
+      clientId: new UniqueEntityId("client-01"),
+      workScheduleId: new UniqueEntityId("work-schedule-01"),
+      date: new Date("2024-09-10T14:00:00"),
+    });
 
-    const booking = makeBooking({
+    await sut.execute(booking1);
+
+    const booking2 = makeBooking({
       clientId: new UniqueEntityId("client-02"),
       workScheduleId: new UniqueEntityId("work-schedule-01"),
       date: new Date("2024-09-10T14:00:00"),
     });
 
-    const result = await sut.execute(booking);
+    const secondBooking = await sut.execute(booking2);
 
-    expect(result.isLeft()).toBe(true);
+    expect(secondBooking.isLeft()).toBe(true);
     expect(inMemoryBookingsRepository.items).toHaveLength(1);
   });
 });
