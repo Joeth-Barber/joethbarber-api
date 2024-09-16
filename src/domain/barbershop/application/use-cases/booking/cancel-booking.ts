@@ -7,18 +7,26 @@ import { BookingTooCloseToStartError } from "@/core/errors/booking-too-close-to-
 import { NotAllowedError } from "@/core/errors/not-allowed";
 import { WorkSchedulesRepository } from "../../repositories/work-schedules-repository";
 import { format } from "date-fns";
+import { ClientsRepository } from "../../repositories/clients-repository";
+import { PaymentsRepository } from "../../repositories/payments-repository";
+import { Booking } from "@/domain/barbershop/enterprise/entities/booking";
 
 interface CancelBookingUseCaseRequest {
   bookingId: UniqueEntityId;
   clientId: UniqueEntityId;
 }
 
-type CancelBookingUseCaseResponse = Either<ResourceNotFoundError, {}>;
+type CancelBookingUseCaseResponse = Either<
+  ResourceNotFoundError,
+  { booking: Booking }
+>;
 
 @Injectable()
 export class CancelBookingUseCase {
   constructor(
     private bookingsRepository: BookingsRepository,
+    private clientsRepository: ClientsRepository,
+    private paymentsRepository: PaymentsRepository,
     private workSchedulesRepository: WorkSchedulesRepository
   ) {}
 
@@ -26,6 +34,12 @@ export class CancelBookingUseCase {
     bookingId,
     clientId,
   }: CancelBookingUseCaseRequest): Promise<CancelBookingUseCaseResponse> {
+    const client = await this.clientsRepository.findById(clientId.toString());
+
+    if (!client) {
+      return left(new ResourceNotFoundError());
+    }
+
     const booking = await this.bookingsRepository.findById(
       bookingId.toString()
     );
@@ -50,6 +64,35 @@ export class CancelBookingUseCase {
 
     await this.bookingsRepository.save(booking);
 
+    if (client.role === "CLIENT") {
+      const payment = await this.paymentsRepository.findByBookingId(
+        bookingId.toString()
+      );
+      if (payment) {
+        await this.paymentsRepository.delete(payment);
+      }
+    }
+
+    if (client.role === "MENSALIST") {
+      const payment = await this.paymentsRepository.findLatestByClientId(
+        clientId.toString()
+      );
+      if (payment) {
+        payment.amount -= booking.totalPrice;
+        if (payment.amount < 0) payment.amount = 0;
+        await this.paymentsRepository.save(payment);
+      }
+    }
+
+    if (client.role === "CLIENT") {
+      const payment = await this.paymentsRepository.findByBookingId(
+        bookingId.toString()
+      );
+      if (payment) {
+        await this.paymentsRepository.delete(payment);
+      }
+    }
+
     const workSchedule = await this.workSchedulesRepository.findById(
       booking.workScheduleId.toString()
     );
@@ -72,6 +115,8 @@ export class CancelBookingUseCase {
 
     await this.workSchedulesRepository.save(workSchedule);
 
-    return right({});
+    return right({
+      booking,
+    });
   }
 }

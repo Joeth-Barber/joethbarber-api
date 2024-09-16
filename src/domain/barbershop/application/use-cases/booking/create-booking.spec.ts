@@ -8,9 +8,11 @@ import { makeService } from "test/factories/make-service";
 import { makeProduct } from "test/factories/make-product";
 import { InMemoryWorkSchedulesRepository } from "test/repositories/in-memory-work-schedules-repository";
 import { makeWorkSchedule } from "test/factories/make-work-schedule";
+import { InMemoryPaymentsRepository } from "test/repositories/in-memory-payments-repository";
 
 let inMemoryBookingsRepository: InMemoryBookingsRepository;
 let inMemoryClientsRepository: InMemoryClientsRepository;
+let inMemoryPaymentsRepository: InMemoryPaymentsRepository;
 let inMemoryWorkSchedulesRepository: InMemoryWorkSchedulesRepository;
 let sut: CreateBookingUseCase;
 
@@ -18,10 +20,12 @@ describe("Create Booking", () => {
   beforeEach(() => {
     inMemoryBookingsRepository = new InMemoryBookingsRepository();
     inMemoryClientsRepository = new InMemoryClientsRepository();
+    inMemoryPaymentsRepository = new InMemoryPaymentsRepository();
     inMemoryWorkSchedulesRepository = new InMemoryWorkSchedulesRepository();
     sut = new CreateBookingUseCase(
       inMemoryBookingsRepository,
       inMemoryClientsRepository,
+      inMemoryPaymentsRepository,
       inMemoryWorkSchedulesRepository
     );
     vi.useFakeTimers();

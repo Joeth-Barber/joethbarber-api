@@ -10,12 +10,13 @@ import { ClientsRepository } from "../../repositories/clients-repository";
 import { BookingDateOverlappingError } from "@/core/errors/booking-date-overlapping";
 import { WorkSchedulesRepository } from "../../repositories/work-schedules-repository";
 import { format } from "date-fns";
+import { PaymentsRepository } from "../../repositories/payments-repository";
+import { Payment } from "@/domain/barbershop/enterprise/entities/payment";
 
 interface CreateBookingUseCaseRequest {
   clientId: UniqueEntityId;
   workScheduleId: UniqueEntityId;
   date: Date;
-  totalPrice: number;
   description: string;
   products: Product[];
   services: Service[];
@@ -32,6 +33,7 @@ export class CreateBookingUseCase {
   constructor(
     private bookingsRepository: BookingsRepository,
     private clientsRepository: ClientsRepository,
+    private paymentsRepository: PaymentsRepository,
     private workSchedulesRepository: WorkSchedulesRepository
   ) {}
 
@@ -51,7 +53,6 @@ export class CreateBookingUseCase {
     }
 
     const bookingStart = format(date, "HH:mm");
-
     const bookingEnd = format(
       new Date(date.getTime() + 30 * 60 * 1000),
       "HH:mm"
@@ -113,6 +114,38 @@ export class CreateBookingUseCase {
     });
 
     await this.bookingsRepository.create(booking);
+
+    if (client.role === "CLIENT") {
+      const payment = Payment.create({
+        clientId: new UniqueEntityId(clientId.toString()),
+        status: "PENDING",
+        bookings: [booking],
+        amount: booking.totalPrice,
+      });
+
+      await this.paymentsRepository.create(payment);
+    }
+
+    if (client.role === "MENSALIST") {
+      const existingPayment =
+        await this.paymentsRepository.findLatestByClientId(clientId.toString());
+
+      if (!existingPayment) {
+        const payment = Payment.create({
+          clientId: new UniqueEntityId(clientId.toString()),
+          status: "PENDING",
+          bookings: [booking],
+          amount: booking.totalPrice,
+        });
+
+        await this.paymentsRepository.create(payment);
+      } else {
+        existingPayment.amount += booking.totalPrice;
+        existingPayment.bookings.push(booking);
+
+        await this.paymentsRepository.save(existingPayment);
+      }
+    }
 
     return right({ booking });
   }

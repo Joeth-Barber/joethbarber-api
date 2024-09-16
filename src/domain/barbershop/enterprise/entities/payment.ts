@@ -11,6 +11,7 @@ export interface PaymentProps {
   products: Product[];
   amount: number;
   paymentDate: Date | null;
+  createdAt: Date;
   updatedAt?: Date | null;
 }
 
@@ -64,6 +65,10 @@ export class Payment extends Entity<PaymentProps> {
     this.touch();
   }
 
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
   get updatedAt() {
     return this.props.updatedAt;
   }
@@ -75,7 +80,7 @@ export class Payment extends Entity<PaymentProps> {
   static create(
     props: Optional<
       PaymentProps,
-      "bookings" | "products" | "status" | "paymentDate"
+      "bookings" | "products" | "status" | "createdAt" | "paymentDate"
     >,
     id?: UniqueEntityId
   ) {
@@ -86,6 +91,7 @@ export class Payment extends Entity<PaymentProps> {
         products: props.products ?? [],
         status: props.status ?? "PENDING",
         paymentDate: props.paymentDate ?? null,
+        createdAt: props.createdAt ?? new Date(),
       },
       id
     );

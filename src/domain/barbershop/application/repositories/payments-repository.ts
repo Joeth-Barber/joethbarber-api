@@ -9,5 +9,7 @@ export abstract class PaymentsRepository {
     params: PaginationParams,
     id: string
   ): Promise<Payment[]>;
+  abstract findLatestByClientId(clientId: string): Promise<Payment | null>;
+  abstract findByBookingId(bookingId: string): Promise<Payment | null>;
   abstract create(payment: Payment): Promise<void>;
 }

@@ -6,6 +6,20 @@ import { Booking } from "@/domain/barbershop/enterprise/entities/booking";
 export class InMemoryBookingsRepository implements BookingsRepository {
   public items: Booking[] = [];
 
+  async findManyByClientId({ page }: PaginationParams, clientId: string) {
+    const clientBookings = this.items
+      .filter((booking) => booking.clientId.toString() === clientId)
+      .sort((a, b) => {
+        if (!a.createdAt) return 1;
+        if (!b.createdAt) return -1;
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+
+    const bookings = clientBookings.slice((page - 1) * 10, page * 10);
+
+    return bookings;
+  }
+
   async findOverlappingBooking(
     workScheduleId: UniqueEntityId,
     date: Date
@@ -54,7 +68,12 @@ export class InMemoryBookingsRepository implements BookingsRepository {
   async cancel(booking: Booking) {
     const itemIndex = this.items.findIndex((item) => item.id === booking.id);
 
-    this.items.splice(itemIndex, 1);
+    if (itemIndex !== -1) {
+      const [removedItem] = this.items.splice(itemIndex, 1);
+      return removedItem;
+    }
+
+    return null;
   }
 
   async findById(id: string) {

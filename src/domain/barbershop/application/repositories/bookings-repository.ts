@@ -10,7 +10,11 @@ export abstract class BookingsRepository {
   ): Promise<Booking | null>;
   abstract findByDate(date: Date): Promise<Booking | null>;
   abstract findMany(params: PaginationParams): Promise<Booking[]>;
-  abstract cancel(booking: Booking): Promise<void>;
+  abstract findManyByClientId(
+    params: PaginationParams,
+    clientId: string
+  ): Promise<Booking[]>;
   abstract findById(id: string): Promise<Booking | null>;
+  abstract cancel(booking: Booking): Promise<Booking | null>;
   abstract create(booking: Booking): Promise<void>;
 }
