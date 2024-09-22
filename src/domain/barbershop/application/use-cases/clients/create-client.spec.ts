@@ -3,16 +3,23 @@ import { CreateClientUseCase } from "./create-client";
 import { FakeHasher } from "test/cryptography/fake-hasher";
 import { makeClient } from "test/factories/make-client";
 import { CPF } from "../../../enterprise/entities/value-objects/cpf";
+import { FakeEncrypter } from "test/cryptography/fake-encrypter";
 
 let inMemoryClientsRepository: InMemoryClientsRepository;
 let fakeHasher: FakeHasher;
+let fakeEncrypter: FakeEncrypter;
 let sut: CreateClientUseCase;
 
 describe("Create Client", () => {
   beforeEach(() => {
     inMemoryClientsRepository = new InMemoryClientsRepository();
     fakeHasher = new FakeHasher();
-    sut = new CreateClientUseCase(inMemoryClientsRepository, fakeHasher);
+    fakeEncrypter = new FakeEncrypter();
+    sut = new CreateClientUseCase(
+      inMemoryClientsRepository,
+      fakeHasher,
+      fakeEncrypter
+    );
   });
 
   it("should be able to create a new client", async () => {
@@ -21,6 +28,7 @@ describe("Create Client", () => {
     const result = await sut.execute(client);
 
     expect(result.isRight()).toBe(true);
+
     expect(inMemoryClientsRepository.items).toHaveLength(1);
   });
 
@@ -37,22 +45,6 @@ describe("Create Client", () => {
     expect(inMemoryClientsRepository.items).toHaveLength(1);
     expect(inMemoryClientsRepository.items[0].password).toEqual(hashedPassword);
   });
-
-  // it("should hash client cpf upon creation", async () => {
-  //   const client = makeClient({
-  //     cpf: CPF.create("111.111.111-11"),
-  //   });
-
-  //   const hashedCpf = await fakeHasher.hash("11111111111");
-
-  //   const result = await sut.execute(client);
-
-  //   console.log(inMemoryClientsRepository.items[0].cpf.value);
-
-  //   expect(result.isRight()).toBe(true);
-  //   expect(inMemoryClientsRepository.items).toHaveLength(1);
-  //   expect(inMemoryClientsRepository.items[0].cpf.value).toEqual(hashedCpf);
-  // });
 
   it("should not be able to create a new user with existing phone", async () => {
     const client1 = makeClient({

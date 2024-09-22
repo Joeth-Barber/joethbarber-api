@@ -13,7 +13,10 @@ describe("Create Work Schedule", () => {
   beforeEach(() => {
     inMemoryWorkSchedulesRepository = new InMemoryWorkSchedulesRepository();
     inMemoryBarbersRepository = new InMemoryBarbersRepository();
-    sut = new CreateWorkScheduleUseCase(inMemoryWorkSchedulesRepository);
+    sut = new CreateWorkScheduleUseCase(
+      inMemoryWorkSchedulesRepository,
+      inMemoryBarbersRepository
+    );
   });
 
   it("should be able to create a new work schedule", async () => {

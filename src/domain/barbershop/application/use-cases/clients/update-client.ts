@@ -8,22 +8,24 @@ import { CpfAlreadyExistsError } from "@/core/errors/cpf-already-exists";
 import { PhoneAlreadyExistsError } from "@/core/errors/phone-already-exists";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
+import { NotAllowedError } from "@/core/errors/not-allowed";
 
 interface UpdateClientUseCaseRequest {
   clientId: UniqueEntityId;
-  fullName: string;
-  nickName: string;
-  phone: string;
-  email: string;
-  password: string;
-  billingDay: number;
+  fullName?: string;
+  nickName?: string;
+  phone?: string;
+  email?: string;
+  password?: string;
+  billingDay?: number;
 }
 
 type UpdateClientUseCaseResponse = Either<
   | ResourceNotFoundError
   | EmailAlreadyExistsError
   | PhoneAlreadyExistsError
-  | CpfAlreadyExistsError,
+  | CpfAlreadyExistsError
+  | NotAllowedError,
   { client: Client }
 >;
 
@@ -43,32 +45,47 @@ export class UpdateClientUseCase {
     password,
     billingDay,
   }: UpdateClientUseCaseRequest): Promise<UpdateClientUseCaseResponse> {
-    const phoneAlreadyExists = await this.clientsRepository.findByPhone(phone);
-
-    if (phoneAlreadyExists) {
-      return left(new PhoneAlreadyExistsError());
-    }
-
-    const emailAlreadyExists = await this.clientsRepository.findByEmail(email);
-
-    if (emailAlreadyExists) {
-      return left(new EmailAlreadyExistsError());
-    }
-
     const client = await this.clientsRepository.findById(clientId.toString());
 
     if (!client) {
       return left(new ResourceNotFoundError());
     }
 
-    const password_hash = await this.hashGenerator.hash(password);
+    if (client.id.toString() !== clientId.toString()) {
+      return left(new NotAllowedError());
+    }
 
-    client.fullName = fullName;
-    client.nickName = nickName;
-    client.phone = phone;
-    client.email = email;
-    client.password = password_hash;
-    client.billingDay = billingDay;
+    if (phone && phone !== client.phone) {
+      const phoneAlreadyExists = await this.clientsRepository.findByPhone(
+        phone
+      );
+      if (phoneAlreadyExists) {
+        return left(new PhoneAlreadyExistsError());
+      }
+      client.phone = phone;
+    }
+
+    if (email && email !== client.email) {
+      const emailAlreadyExists = await this.clientsRepository.findByEmail(
+        email
+      );
+      if (emailAlreadyExists) {
+        return left(new EmailAlreadyExistsError());
+      }
+      client.email = email;
+    }
+
+    if (fullName && client.fullName !== fullName) client.fullName = fullName;
+
+    if (nickName && client.nickName !== nickName) client.nickName = nickName;
+
+    if (billingDay && client.billingDay !== billingDay)
+      client.billingDay = billingDay;
+
+    if (password) {
+      const password_hash = await this.hashGenerator.hash(password);
+      client.password = password_hash;
+    }
 
     await this.clientsRepository.save(client);
 

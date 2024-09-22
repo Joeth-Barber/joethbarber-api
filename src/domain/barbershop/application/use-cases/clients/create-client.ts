@@ -7,6 +7,7 @@ import { HashGenerator } from "../../cryptography/hash-generator";
 import { EmailAlreadyExistsError } from "@/core/errors/email-already-exists";
 import { CpfAlreadyExistsError } from "@/core/errors/cpf-already-exists";
 import { PhoneAlreadyExistsError } from "@/core/errors/phone-already-exists";
+import { Encrypter } from "../../cryptography/encrypter";
 
 interface CreateClientUseCaseRequest {
   fullName: string;
@@ -20,14 +21,15 @@ interface CreateClientUseCaseRequest {
 
 type CreateClientUseCaseResponse = Either<
   EmailAlreadyExistsError | PhoneAlreadyExistsError | CpfAlreadyExistsError,
-  { client: Client }
+  { client: Client; accessToken: string }
 >;
 
 @Injectable()
 export class CreateClientUseCase {
   constructor(
     private clientsRepository: ClientsRepository,
-    private hashGenerator: HashGenerator
+    private hashGenerator: HashGenerator,
+    private encrypter: Encrypter
   ) {}
 
   async execute({
@@ -71,6 +73,11 @@ export class CreateClientUseCase {
 
     await this.clientsRepository.create(client);
 
-    return right({ client });
+    const accessToken = await this.encrypter.encrypt({
+      sub: client.id.toString(),
+      role: client.role,
+    });
+
+    return right({ client, accessToken });
   }
 }

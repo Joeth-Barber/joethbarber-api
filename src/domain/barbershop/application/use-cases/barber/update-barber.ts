@@ -9,9 +9,9 @@ import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 
 interface UpdateBarberUseCaseRequest {
   barberId: UniqueEntityId;
-  fullName: string;
-  email: string;
-  password: string;
+  fullName?: string;
+  email?: string;
+  password?: string;
 }
 
 type UpdateBarberUseCaseResponse = Either<
@@ -32,23 +32,28 @@ export class UpdateBarberUseCase {
     email,
     password,
   }: UpdateBarberUseCaseRequest): Promise<UpdateBarberUseCaseResponse> {
-    const emailAlreadyExists = await this.barbersRepository.findByEmail(email);
-
-    if (emailAlreadyExists) {
-      return left(new EmailAlreadyExistsError());
-    }
-
     const barber = await this.barbersRepository.findById(barberId.toString());
 
     if (!barber) {
       return left(new ResourceNotFoundError());
     }
 
-    const password_hash = await this.hashGenerator.hash(password);
+    if (email && email !== barber.email) {
+      const emailAlreadyExists = await this.barbersRepository.findByEmail(
+        email
+      );
+      if (emailAlreadyExists) {
+        return left(new EmailAlreadyExistsError());
+      }
+      barber.email = email;
+    }
 
-    barber.fullName = fullName;
-    barber.email = email;
-    barber.password = password_hash;
+    if (fullName && barber.fullName !== fullName) barber.fullName = fullName;
+
+    if (password) {
+      const password_hash = await this.hashGenerator.hash(password);
+      barber.password = password_hash;
+    }
 
     await this.barbersRepository.save(barber);
 

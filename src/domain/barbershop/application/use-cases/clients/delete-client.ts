@@ -27,6 +27,10 @@ export class DeleteClientUseCase {
       return left(new ResourceNotFoundError());
     }
 
+    if (client.id.toString() !== clientId.toString()) {
+      return left(new NotAllowedError());
+    }
+
     await this.clientsRepository.delete(client);
 
     return right({});
