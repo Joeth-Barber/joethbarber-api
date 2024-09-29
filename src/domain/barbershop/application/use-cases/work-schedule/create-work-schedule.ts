@@ -14,7 +14,6 @@ import { NotAllowedError } from "@/core/errors/not-allowed";
 export interface CreateWorkScheduleUseCaseRequest {
   barberId: UniqueEntityId;
   workDays: WorkDay[];
-  status: "ACTIVE" | "DISABLED";
 }
 
 type CreateWorkScheduleUseCaseResponse = Either<
@@ -32,7 +31,6 @@ export class CreateWorkScheduleUseCase {
   async execute({
     barberId,
     workDays,
-    status,
   }: CreateWorkScheduleUseCaseRequest): Promise<CreateWorkScheduleUseCaseResponse> {
     const barber = await this.barbersRepository.findById(barberId.toString());
 
@@ -49,7 +47,6 @@ export class CreateWorkScheduleUseCase {
     const workSchedule = WorkSchedule.create({
       barberId,
       workDays: workDaysWithAvailableHours,
-      status,
     });
 
     await this.workSchedulesRepository.create(workSchedule);
