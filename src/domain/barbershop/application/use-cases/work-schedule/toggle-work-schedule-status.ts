@@ -1,4 +1,3 @@
-
 import { Either, left, right } from "@/core/either";
 import { Injectable } from "@nestjs/common";
 import { WorkSchedulesRepository } from "../../repositories/work-schedules-repository";
@@ -8,8 +7,8 @@ import { NotAllowedError } from "@/core/errors/not-allowed";
 import { BarbersRepository } from "../../repositories/barbers-repository";
 
 export interface ToggleWorkScheduleStatusUseCaseRequest {
-  workScheduleId: UniqueEntityId,
-  barberId: UniqueEntityId
+  workScheduleId: UniqueEntityId;
+  barberId: UniqueEntityId;
 }
 
 type ToggleWorkScheduleStatusUseCaseResponse = Either<
@@ -22,11 +21,11 @@ export class ToggleWorkScheduleStatusUseCase {
   constructor(
     private workSchedulesRepository: WorkSchedulesRepository,
     private barbersRepository: BarbersRepository
-) {}
+  ) {}
 
   async execute({
     workScheduleId,
-    barberId
+    barberId,
   }: ToggleWorkScheduleStatusUseCaseRequest): Promise<ToggleWorkScheduleStatusUseCaseResponse> {
     const barber = await this.barbersRepository.findById(barberId.toString());
 
@@ -35,21 +34,21 @@ export class ToggleWorkScheduleStatusUseCase {
     }
 
     const workSchedule = await this.workSchedulesRepository.findById(
-        workScheduleId.toString()
+      workScheduleId.toString()
     );
 
     if (!workSchedule) {
-        return left(new ResourceNotFoundError());
-      }
+      return left(new ResourceNotFoundError());
+    }
 
     if (barber.id.toString() !== workSchedule.barberId.toString()) {
       return left(new NotAllowedError());
     }
 
     if (workSchedule.status === "ACTIVE") {
-        workSchedule.status = "DISABLED";
+      workSchedule.status = "DISABLED";
     } else {
-        workSchedule.status = "ACTIVE";
+      workSchedule.status = "ACTIVE";
     }
 
     await this.workSchedulesRepository.save(workSchedule);

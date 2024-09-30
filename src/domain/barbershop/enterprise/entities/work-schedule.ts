@@ -14,6 +14,7 @@ export interface WorkDay {
   endTime: string; // HH:mm
   breaks?: Break[];
   availableHours?: string[];
+  status: boolean;
 }
 
 export interface WorkScheduleProps {
@@ -21,6 +22,7 @@ export interface WorkScheduleProps {
   workDays: WorkDay[];
   status: "ACTIVE" | "DISABLED";
   createdAt: Date;
+  activatedAt?: Date | null;
   updatedAt?: Date | null;
 }
 
@@ -51,6 +53,14 @@ export class WorkSchedule extends Entity<WorkScheduleProps> {
     return this.props.createdAt;
   }
 
+  get activatedAt() {
+    return this.props.createdAt;
+  }
+
+  set activatedAt(date: Date) {
+    this.props.activatedAt = date;
+  }
+
   get updatedAt() {
     return this.props.updatedAt;
   }
@@ -60,13 +70,14 @@ export class WorkSchedule extends Entity<WorkScheduleProps> {
   }
 
   static create(
-    props: Optional<WorkScheduleProps, "createdAt" | "status">,
+    props: Optional<WorkScheduleProps, "createdAt" | "activatedAt" | "status">,
     id?: UniqueEntityId
   ) {
     const workSchedule = new WorkSchedule(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
+        activatedAt: props.activatedAt ?? null,
         status: props.status ?? "DISABLED",
       },
       id
