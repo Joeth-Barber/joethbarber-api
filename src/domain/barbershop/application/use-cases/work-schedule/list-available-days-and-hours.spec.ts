@@ -261,13 +261,6 @@ describe("List available days and it hours", () => {
 
     const activatedAt = new Date();
     activatedAt.setTime(activatedAt.getTime() - 26 * 60 * 60 * 1000); // Subtract 25 hours in milliseconds
-    const aDayInMilliseconds = 24 * 60 * 60 * 1000;
-    console.log("@@@@ activatedAt setted: " + activatedAt.getTime());
-    /*console.log(
-      "@@@@ isAfter24Hours: " +
-        (new Date().getTime() - activatedAt.getTime() >= aDayInMilliseconds)
-    );*/
-
     await inMemoryWorkSchedulesRepository.create(
       makeWorkSchedule(
         {
@@ -289,25 +282,6 @@ describe("List available days and it hours", () => {
         new UniqueEntityId("work-schedule-01")
       )
     );
-
-    inMemoryWorkSchedulesRepository
-      .findById("work-schedule-01")
-      .then((work) =>
-        console.log("@@@@ status before toggle: " + work?.status)
-      );
-
-    sutToggle
-      .execute({
-        workScheduleId: new UniqueEntityId("work-schedule-01"),
-        barberId: new UniqueEntityId("barber-01"),
-      })
-      .then((result) =>
-        inMemoryWorkSchedulesRepository
-          .findById("work-schedule-01")
-          .then((work) =>
-            console.log("@@@@ status after toggle: " + work?.status)
-          )
-      );
 
     const result = await sut.execute({
       workScheduleId: new UniqueEntityId("work-schedule-01"),

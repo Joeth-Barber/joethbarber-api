@@ -55,11 +55,6 @@ export class FetchAvailableDaysAndHoursUseCase {
       workSchedule.activatedAt.getTime() - new Date().getTime() >=
       aDayInMilliseconds;
 
-    console.log(
-      "@@@@ activatedAt validated : " + workSchedule.activatedAt.getTime()
-    );
-    console.log("@@@ isAfter24Hours: " + isAfter24Hours);
-
     if (client.role === "MENSALIST" && workSchedule.status === "ACTIVE") {
       return right({
         availableDaysAndItHours,
