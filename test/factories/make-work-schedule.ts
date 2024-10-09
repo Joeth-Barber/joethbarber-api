@@ -22,6 +22,7 @@ export function makeWorkSchedule(
         },
       ],
       availableHours: [],
+      status: true,
     },
   ];
 
