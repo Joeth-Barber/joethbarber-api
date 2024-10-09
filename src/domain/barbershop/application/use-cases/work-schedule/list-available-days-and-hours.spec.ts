@@ -116,9 +116,6 @@ describe("List available days and it hours", () => {
       makeClient({ role: "MENSALIST" }, new UniqueEntityId("client-01"))
     );
     expect(inMemoryClientsRepository.items).toHaveLength(1);
-    //TODO: não posso começar um workSchedule.status como ACTIVE pq tem que começar
-    // como DISABLED e só ativar via ToggleWorkScheduleStatusUseCase.
-
     await inMemoryWorkSchedulesRepository.create(
       makeWorkSchedule(
         {
@@ -253,11 +250,6 @@ describe("List available days and it hours", () => {
       makeBarber({}, new UniqueEntityId("barber-01"))
     );
     expect(inMemoryBarbersRepository.items).toHaveLength(1);
-
-    //give a work schedule that was activated 25 hours ago
--
-    //TODO: ESTOU PASSANDO UM activatedAt pra frente porem está
-    // CHEGANDO UM activatedAt diferente lá no list-available-days-and-hours.ts
 
     const activatedAt = new Date();
     activatedAt.setTime(activatedAt.getTime() - 26 * 60 * 60 * 1000); // Subtract 25 hours in milliseconds
