@@ -317,7 +317,7 @@ describe("List available days and it hours", () => {
               status: true,
             },
           ],
-          status: "DISABLED",
+          status: "ACTIVE",
         },
         new UniqueEntityId("work-schedule-01")
       )
