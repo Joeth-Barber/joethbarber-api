@@ -9,6 +9,7 @@ import { BarbersRepository } from "../../repositories/barbers-repository";
 export interface ToggleWorkScheduleStatusUseCaseRequest {
   workScheduleId: UniqueEntityId;
   barberId: UniqueEntityId;
+  allowClients?: boolean; // Usado para liberar clientes avulsos
 }
 
 type ToggleWorkScheduleStatusUseCaseResponse = Either<
@@ -26,6 +27,7 @@ export class ToggleWorkScheduleStatusUseCase {
   async execute({
     workScheduleId,
     barberId,
+    allowClients,
   }: ToggleWorkScheduleStatusUseCaseRequest): Promise<ToggleWorkScheduleStatusUseCaseResponse> {
     const barber = await this.barbersRepository.findById(barberId.toString());
 
@@ -45,10 +47,11 @@ export class ToggleWorkScheduleStatusUseCase {
       return left(new NotAllowedError());
     }
 
-    if (workSchedule.status === "ACTIVE") {
-      workSchedule.status = "DISABLED";
+    if (allowClients !== undefined) {
+      workSchedule.allowClientsToView = allowClients;
     } else {
-      workSchedule.status = "ACTIVE";
+      workSchedule.status =
+        workSchedule.status === "ACTIVE" ? "DISABLED" : "ACTIVE";
     }
 
     await this.workSchedulesRepository.save(workSchedule);

@@ -30,6 +30,7 @@ export function makeWorkSchedule(
     {
       barberId: new UniqueEntityId(),
       workDays: populateAvailableHours(defaultWorkDays),
+      allowClientsToView: false,
       ...override,
     },
     id
