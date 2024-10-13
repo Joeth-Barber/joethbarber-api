@@ -21,6 +21,7 @@ export interface WorkScheduleProps {
   barberId: UniqueEntityId;
   workDays: WorkDay[];
   status: "ACTIVE" | "DISABLED";
+  allowClientsToView: boolean;
   createdAt: Date;
   activatedAt?: Date | null;
   updatedAt?: Date | null;
@@ -49,6 +50,15 @@ export class WorkSchedule extends Entity<WorkScheduleProps> {
     this.touch();
   }
 
+  get allowClientsToView() {
+    return this.props.allowClientsToView;
+  }
+
+  set allowClientsToView(allowClientsToView: boolean) {
+    this.props.allowClientsToView = allowClientsToView;
+    this.touch();
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -70,7 +80,10 @@ export class WorkSchedule extends Entity<WorkScheduleProps> {
   }
 
   static create(
-    props: Optional<WorkScheduleProps, "createdAt" | "activatedAt" | "status">,
+    props: Optional<
+      WorkScheduleProps,
+      "allowClientsToView" | "createdAt" | "activatedAt" | "status"
+    >,
     id?: UniqueEntityId
   ) {
     const workSchedule = new WorkSchedule(
@@ -78,6 +91,7 @@ export class WorkSchedule extends Entity<WorkScheduleProps> {
         ...props,
         createdAt: props.createdAt ?? new Date(),
         activatedAt: props.activatedAt ?? null,
+        allowClientsToView: props.allowClientsToView ?? false,
         status: props.status ?? "DISABLED",
       },
       id

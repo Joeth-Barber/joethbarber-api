@@ -13,7 +13,7 @@ export interface FetchAvailableDaysAndHoursUseCaseRequest {
 
 type FetchAvailableDaysAndHoursUseCaseResponse = Either<
   ResourceNotFoundError,
-  { availableDaysAndItHours: WorkDay[] }
+  { availableDaysAndHours: WorkDay[] }
 >;
 
 @Injectable()
@@ -41,71 +41,20 @@ export class FetchAvailableDaysAndHoursUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const availableDaysAndItHours = workSchedule.workDays.map(
-      (workDay) => workDay
-    );
-
-    if (!availableDaysAndItHours) {
-      return left(new ResourceNotFoundError());
-    }
-
-    //TODO: colocar essa variavel numa configuração remota;
-    const aDayInMilliseconds = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-    let isAfter24Hours =
-      workSchedule.activatedAt.getTime() - new Date().getTime() >=
-      aDayInMilliseconds;
-
-    if (client.role === "MENSALIST" && workSchedule.status === "ACTIVE") {
-      return right({
-        availableDaysAndItHours,
-      });
-    } else if (
-      client.role === "MENSALIST" &&
-      workSchedule.status === "DISABLED"
-    ) {
-      const availableDaysAndItHours = this.setWorkDaysStatusToFalse(
-        workSchedule.workDays
-      );
-
-      return right({
-        availableDaysAndItHours,
-      });
-    } else if (
-      client.role === "CLIENT" &&
+    const isMensalist = client.role === "MENSALIST";
+    const canClientView =
       workSchedule.status === "ACTIVE" &&
-      isAfter24Hours
-    ) {
-      return right({
-        availableDaysAndItHours,
-      });
-    } else if (
-      client.role === "CLIENT" &&
-      workSchedule.status === "ACTIVE" &&
-      !isAfter24Hours
-    ) {
-      const availableDaysAndItHours = this.setWorkDaysStatusToFalse(
-        workSchedule.workDays
-      );
+      (isMensalist ||
+        (workSchedule.allowClientsToView && workSchedule.status === "ACTIVE"));
 
-      return right({
-        availableDaysAndItHours,
-      });
-    } else if (client.role === "CLIENT" && workSchedule.status === "DISABLED") {
-      const availableDaysAndItHours = this.setWorkDaysStatusToFalse(
-        workSchedule.workDays
-      );
+    const availableDaysAndHours = canClientView
+      ? workSchedule.workDays
+      : this.setWorkDaysStatusToFalse(workSchedule.workDays);
 
-      return right({
-        availableDaysAndItHours,
-      });
-    }
-
-    return right({
-      availableDaysAndItHours,
-    });
+    return right({ availableDaysAndHours });
   }
 
-  public setWorkDaysStatusToFalse(workDays: WorkDay[]): WorkDay[] {
+  private setWorkDaysStatusToFalse(workDays: WorkDay[]): WorkDay[] {
     return workDays.map((workDay) => {
       workDay.status = false;
       return workDay;
