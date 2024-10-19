@@ -4,8 +4,10 @@ import { Injectable } from "@nestjs/common";
 import { Barber } from "../../../enterprise/entities/barber";
 import { HashGenerator } from "../../cryptography/hash-generator";
 import { BarbersRepository } from "../../repositories/barbers-repository";
+import { Encrypter } from "../../cryptography/encrypter";
 
 export interface CreateBarberUseCaseRequest {
+  role: "ADMIN" | "EMPLOYEE";
   fullName: string;
   email: string;
   password: string;
@@ -13,17 +15,19 @@ export interface CreateBarberUseCaseRequest {
 
 type CreateBarberUseCaseResponse = Either<
   EmailAlreadyExistsError,
-  { barber: Barber }
+  { barber: Barber; accessToken: string }
 >;
 
 @Injectable()
 export class CreateBarberUseCase {
   constructor(
     private barbersRepository: BarbersRepository,
-    private hashGenerator: HashGenerator
+    private hashGenerator: HashGenerator,
+    private encrypter: Encrypter
   ) {}
 
   async execute({
+    role,
     fullName,
     email,
     password,
@@ -37,6 +41,7 @@ export class CreateBarberUseCase {
     const password_hash = await this.hashGenerator.hash(password);
 
     const barber = Barber.create({
+      role,
       fullName,
       email,
       password: password_hash,
@@ -44,8 +49,14 @@ export class CreateBarberUseCase {
 
     await this.barbersRepository.create(barber);
 
+    const accessToken = await this.encrypter.encrypt({
+      sub: barber.id.toString(),
+      role: barber.role,
+    });
+
     return right({
       barber,
+      accessToken,
     });
   }
 }

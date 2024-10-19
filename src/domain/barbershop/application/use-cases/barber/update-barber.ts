@@ -9,6 +9,7 @@ import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 
 interface UpdateBarberUseCaseRequest {
   barberId: UniqueEntityId;
+  role?: "ADMIN" | "EMPLOYEE";
   fullName?: string;
   email?: string;
   password?: string;
@@ -28,6 +29,7 @@ export class UpdateBarberUseCase {
 
   async execute({
     barberId,
+    role,
     fullName,
     email,
     password,
@@ -47,6 +49,8 @@ export class UpdateBarberUseCase {
       }
       barber.email = email;
     }
+
+    if (role && barber.role !== role) barber.role = role;
 
     if (fullName && barber.fullName !== fullName) barber.fullName = fullName;
 

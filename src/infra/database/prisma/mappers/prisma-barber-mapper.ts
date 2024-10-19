@@ -6,6 +6,7 @@ export class PrismaBarberMapper {
   static toDomain(raw: PrismaBarber): Barber {
     return Barber.create(
       {
+        role: raw.role,
         fullName: raw.fullName,
         email: raw.email,
         password: raw.password,
@@ -17,6 +18,7 @@ export class PrismaBarberMapper {
   static toPrisma(barber: Barber): Prisma.BarberUncheckedCreateInput {
     return {
       id: barber.id.toString(),
+      role: barber.role,
       fullName: barber.fullName,
       email: barber.email,
       password: barber.password,
