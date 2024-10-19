@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BarberRole {
+  ADMIN
+  EMPLOYEE
+}
+
+enum WorkScheduleStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum ClientRole {
+  CLIENT
+  MENSALIST
+}
+
+enum BookingStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
+
+enum PaymentStatus {
+  COMPLETED
+  PENDING
+}
+
+model Barber {
+  id        String     @id @default(uuid())
+  fullName  String
+  email     String     @unique
+  password  String
+  role      BarberRole @default(ADMIN)
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime?  @updatedAt @map("updated_at")
+
+  workSchedules WorkSchedule[] @relation("BarberToWorkSchedules")
+}
+
+model WorkSchedule {
+  id                 String             @id @default(uuid())
+  barber             Barber             @relation("BarberToWorkSchedules", fields: [barberId], references: [id])
+  barberId           String
+  workDays           Json
+  status             WorkScheduleStatus @default(DISABLED)
+  allowClientsToView Boolean            @default(false)
+  createdAt          DateTime           @default(now()) @map("created_at")
+  activatedAt        DateTime?          @map("activated_at")
+  updatedAt          DateTime?          @updatedAt @map("updated_at")
+}
+
+model Client {
+  id         String     @id @default(uuid())
+  role       ClientRole @default(CLIENT)
+  fullName   String
+  nickName   String
+  phone      String
+  cpf        String     @unique
+  email      String     @unique
+  password   String
+  billingDay Int
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime?  @updatedAt @map("updated_at")
+
+  payments Payment[] @relation("ClientPayments")
+  bookings Booking[] @relation("ClientBookings")
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  client         Client        @relation("ClientBookings", fields: [clientId], references: [id])
+  clientId       String
+  workScheduleId String
+  date           DateTime
+  totalPrice     Float
+  description    String
+  services       Json
+  products       Json
+  status         BookingStatus @default(PENDING)
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime?     @updatedAt @map("updated_at")
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  client      Client        @relation("ClientPayments", fields: [clientId], references: [id])
+  clientId    String
+  amount      Float
+  status      PaymentStatus @default(PENDING)
+  bookings    Json
+  products    Json
+  paymentDate DateTime?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime?     @updatedAt @map("updated_at")
+}
+
+model Service {
+  id        String    @id @default(uuid())
+  name      String
+  price     Float
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+}
+
+model Product {
+  id        String    @id @default(uuid())
+  name      String
+  price     Float
+  Quantity  Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+}
