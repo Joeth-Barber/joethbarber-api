@@ -4,7 +4,7 @@ import { Optional } from "src/core/types/optional";
 import { WorkSchedule } from "./work-schedule";
 
 export interface BarberProps {
-  role: "ADMIN";
+  role: "ADMIN" | "EMPLOYEE";
   fullName: string;
   email: string;
   password: string;
@@ -25,6 +25,10 @@ export class Barber extends Entity<BarberProps> {
   set fullName(fullName: string) {
     this.props.fullName = fullName;
     this.touch();
+  }
+
+  get email() {
+    return this.props.email;
   }
 
   set email(email: string) {
