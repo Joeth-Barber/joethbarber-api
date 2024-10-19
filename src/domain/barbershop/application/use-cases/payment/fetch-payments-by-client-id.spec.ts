@@ -55,6 +55,7 @@ describe("Fetch Payments By Client Id", () => {
                   endTime: "13:00",
                 },
               ],
+              status: true,
             },
           ],
         },

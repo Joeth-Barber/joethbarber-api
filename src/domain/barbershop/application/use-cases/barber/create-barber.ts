@@ -40,7 +40,6 @@ export class CreateBarberUseCase {
       fullName,
       email,
       password: password_hash,
-      role: "ADMIN",
     });
 
     await this.barbersRepository.create(barber);
