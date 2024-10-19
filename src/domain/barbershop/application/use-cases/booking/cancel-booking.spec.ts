@@ -64,6 +64,7 @@ describe("Cancel Booking", () => {
                   endTime: "13:00",
                 },
               ],
+              status: true,
             },
           ],
         },
@@ -121,6 +122,7 @@ describe("Cancel Booking", () => {
                   endTime: "13:00",
                 },
               ],
+              status: true,
             },
           ],
         },
@@ -167,6 +169,7 @@ describe("Cancel Booking", () => {
                   endTime: "13:00",
                 },
               ],
+              status: true
             },
           ],
         },

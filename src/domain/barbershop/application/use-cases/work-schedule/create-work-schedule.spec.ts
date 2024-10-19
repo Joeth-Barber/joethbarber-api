@@ -34,6 +34,7 @@ describe("Create Work Schedule", () => {
           endTime: "22:00",
           breaks: [{ title: "Almoço", startTime: "12:00", endTime: "13:00" }],
           availableHours: [],
+          status: true,
         },
       ],
     });
@@ -41,7 +42,6 @@ describe("Create Work Schedule", () => {
     const result = await sut.execute({
       barberId: new UniqueEntityId("barber-01"),
       workDays: workSchedule.workDays,
-      status: "ACTIVE",
     });
 
     expect(inMemoryWorkSchedulesRepository.items).toHaveLength(1);

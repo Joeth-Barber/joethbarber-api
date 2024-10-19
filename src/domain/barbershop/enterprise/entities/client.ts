@@ -2,7 +2,6 @@ import { Entity } from "src/core/entities/entity";
 import { UniqueEntityId } from "src/core/entities/unique-entity-id";
 import { Payment } from "./payment";
 import { Booking } from "./booking";
-import { Address } from "./address";
 import { Optional } from "src/core/types/optional";
 import { CPF } from "./value-objects/cpf";
 
@@ -17,7 +16,6 @@ export interface ClientProps {
   billingDay: number; // dia do mês. Ex: 10
   payments: Payment[];
   bookings: Booking[];
-  address: Address | null;
   createdAt: Date;
   updatedAt?: Date | null;
 }
@@ -108,15 +106,6 @@ export class Client extends Entity<ClientProps> {
     this.touch();
   }
 
-  get address() {
-    return this.props.address;
-  }
-
-  set address(address: Address | null) {
-    this.props.address = address;
-    this.touch();
-  }
-
   get createdAt() {
     return this.props.createdAt;
   }
@@ -132,7 +121,7 @@ export class Client extends Entity<ClientProps> {
   static create(
     props: Optional<
       ClientProps,
-      "role" | "billingDay" | "payments" | "bookings" | "address" | "createdAt"
+      "role" | "billingDay" | "payments" | "bookings" | "createdAt"
     >,
     id?: UniqueEntityId
   ) {
@@ -143,7 +132,6 @@ export class Client extends Entity<ClientProps> {
         billingDay: props.billingDay ?? 0,
         payments: props.payments ?? [],
         bookings: props.bookings ?? [],
-        address: props.address ?? null,
         createdAt: props.createdAt ?? new Date(),
       },
       id
