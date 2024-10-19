@@ -18,6 +18,11 @@ export class Barber extends Entity<BarberProps> {
     return this.props.role;
   }
 
+  set role(role: "ADMIN" | "EMPLOYEE") {
+    this.props.role = role;
+    this.touch();
+  }
+
   get fullName() {
     return this.props.fullName;
   }

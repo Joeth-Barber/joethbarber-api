@@ -12,6 +12,7 @@ import { CreateBarberUseCase } from "@/domain/barbershop/application/use-cases/b
 import { EmailAlreadyExistsError } from "@/core/errors/email-already-exists";
 
 const createAccountBodySchema = z.object({
+  role: z.enum(["ADMIN", "EMPLOYEE"]),
   fullName: z.string(),
   email: z.string().email(),
   password: z.string().min(6),
@@ -28,9 +29,10 @@ export class CreateBarberAccountController {
   @HttpCode(201)
   @UsePipes(new ZodValidationPipe(createAccountBodySchema))
   async handle(@Body() body: CreateAccountBodySchema) {
-    const { fullName, email, password } = body;
+    const { role, fullName, email, password } = body;
 
     const result = await this.createBarber.execute({
+      role,
       fullName,
       email,
       password,
@@ -46,5 +48,12 @@ export class CreateBarberAccountController {
           throw new BadRequestException(error.message);
       }
     }
+
+    const { accessToken } = result.value;
+
+    return {
+      access_token: accessToken,
+      role: result.value.barber.role,
+    };
   }
 }
