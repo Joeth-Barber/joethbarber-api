@@ -1,9 +1,11 @@
+import { Optional } from "@/core/types/optional";
 import { Entity } from "src/core/entities/entity";
 import { UniqueEntityId } from "src/core/entities/unique-entity-id";
 
 export interface ServiceProps {
   name: string;
   price: number;
+  createdAt: Date;
   updatedAt?: Date | null;
 }
 
@@ -26,6 +28,10 @@ export class Service extends Entity<ServiceProps> {
     this.touch;
   }
 
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
   get updatedAt() {
     return this.props.updatedAt;
   }
@@ -34,10 +40,14 @@ export class Service extends Entity<ServiceProps> {
     this.props.updatedAt = new Date();
   }
 
-  static create(props: ServiceProps, id?: UniqueEntityId) {
+  static create(
+    props: Optional<ServiceProps, "createdAt">,
+    id?: UniqueEntityId
+  ) {
     const service = new Service(
       {
         ...props,
+        createdAt: props.createdAt ?? new Date(),
       },
       id
     );
