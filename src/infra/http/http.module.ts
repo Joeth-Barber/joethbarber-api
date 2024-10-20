@@ -19,6 +19,16 @@ import { GetServiceByIdController } from "./controllers/service/find-service-by-
 import { FindServiceByIdUseCase } from "@/domain/barbershop/application/use-cases/services/find-service-by-id";
 import { UpdateServiceController } from "./controllers/service/update-service.controller";
 import { UpdateServiceUseCase } from "@/domain/barbershop/application/use-cases/services/update-service";
+import { CreateProductController } from "./controllers/product/create-product.controller";
+import { CreateProductUseCase } from "@/domain/barbershop/application/use-cases/products/create-product";
+import { DeleteProductController } from "./controllers/product/delete-product.controller";
+import { DeleteProductUseCase } from "@/domain/barbershop/application/use-cases/products/delete-product";
+import { UpdateProductController } from "./controllers/product/update-product.controller";
+import { UpdateProductUseCase } from "@/domain/barbershop/application/use-cases/products/update-product";
+import { FetchProductsController } from "./controllers/product/fetch-product.controller";
+import { FetchProductsUseCase } from "@/domain/barbershop/application/use-cases/products/fetch-products";
+import { FindProductByIdUseCase } from "@/domain/barbershop/application/use-cases/products/find-product-by-id";
+import { GetProductByIdController } from "./controllers/product/find-product-by-id.controller";
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -32,6 +42,11 @@ import { UpdateServiceUseCase } from "@/domain/barbershop/application/use-cases/
     FetchServicesController,
     GetServiceByIdController,
     UpdateServiceController,
+    CreateProductController,
+    DeleteProductController,
+    UpdateProductController,
+    FetchProductsController,
+    GetProductByIdController,
   ],
   providers: [
     CreateBarberUseCase,
@@ -43,6 +58,11 @@ import { UpdateServiceUseCase } from "@/domain/barbershop/application/use-cases/
     FetchServicesUseCase,
     FindServiceByIdUseCase,
     UpdateServiceUseCase,
+    CreateProductUseCase,
+    DeleteProductUseCase,
+    UpdateProductUseCase,
+    FetchProductsUseCase,
+    FindProductByIdUseCase,
   ],
 })
 export class HttpModule {}

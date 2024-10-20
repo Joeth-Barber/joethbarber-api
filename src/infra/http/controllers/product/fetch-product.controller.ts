@@ -1,14 +1,8 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Param,
-  Query,
-} from "@nestjs/common";
+import { BadRequestException, Controller, Get, Query } from "@nestjs/common";
 import { z } from "zod";
 import { ZodValidationPipe } from "../../pipes/zod-validation-pipe";
-import { FetchServicesUseCase } from "@/domain/barbershop/application/use-cases/services/fetch-services";
-import { ServicePresenter } from "../../presenters/service-presenter";
+import { FetchProductsUseCase } from "@/domain/barbershop/application/use-cases/products/fetch-products";
+import { ProductPresenter } from "../../presenters/product-presenter";
 
 const pageQueryParamSchema = z
   .string()
@@ -21,13 +15,13 @@ const queryValidationPipe = new ZodValidationPipe(pageQueryParamSchema);
 
 type PageQuerySchema = z.infer<typeof pageQueryParamSchema>;
 
-@Controller("/find/service")
-export class FetchServicesController {
-  constructor(private fetchServices: FetchServicesUseCase) {}
+@Controller("/find/product")
+export class FetchProductsController {
+  constructor(private fetchProducts: FetchProductsUseCase) {}
 
   @Get()
   async handle(@Query("page", queryValidationPipe) page: PageQuerySchema) {
-    const result = await this.fetchServices.execute({
+    const result = await this.fetchProducts.execute({
       page,
     });
 
@@ -35,10 +29,10 @@ export class FetchServicesController {
       throw new BadRequestException();
     }
 
-    const services = result.value.services;
+    const products = result.value.products;
 
     return {
-      services: services.map(ServicePresenter.toHTTP),
+      products: products.map(ProductPresenter.toHTTP),
     };
   }
 }
