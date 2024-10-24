@@ -2,10 +2,8 @@ import { InMemoryClientsRepository } from "test/repositories/in-memory-clients-r
 import { makeClient } from "test/factories/make-client";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { ToggleClientRole } from "./toggle-client-role";
-import { CreateClientUseCase } from "./create-client";
 
 let inMemoryClientsRepository: InMemoryClientsRepository;
-let createClient: CreateClientUseCase;
 let sut: ToggleClientRole;
 
 describe("Toggle Client Role", () => {

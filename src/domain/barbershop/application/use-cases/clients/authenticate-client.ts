@@ -2,30 +2,23 @@ import { Either, left, right } from "@/core/either";
 import { Injectable } from "@nestjs/common";
 import { WrongCredentialsError } from "@/core/errors/wrong-credentials";
 import { ClientsRepository } from "../../repositories/clients-repository";
-import { HashComparer } from "../../cryptography/hash-comparer";
-import { Encrypter } from "../../cryptography/encrypter";
+import { AuthService } from "@/infra/auth/auth.service";
 
 interface AuthenticateClientUseCaseRequest {
   email: string;
-  password: string;
 }
 
-type AuthenticateClientUseCaseResponse = Either<
-  WrongCredentialsError,
-  { accessToken: string }
->;
+type AuthenticateClientUseCaseResponse = Either<WrongCredentialsError, {}>;
 
 @Injectable()
 export class AuthenticateClientUseCase {
   constructor(
-    private clientsRepository: ClientsRepository,
-    private hashCompare: HashComparer,
-    private encrypter: Encrypter
+    private readonly clientsRepository: ClientsRepository,
+    private readonly authService: AuthService
   ) {}
 
   async execute({
     email,
-    password,
   }: AuthenticateClientUseCaseRequest): Promise<AuthenticateClientUseCaseResponse> {
     const client = await this.clientsRepository.findByEmail(email);
 
@@ -33,20 +26,12 @@ export class AuthenticateClientUseCase {
       return left(new WrongCredentialsError());
     }
 
-    const isPasswordValid = await this.hashCompare.compare(
-      password,
-      client.password
+    const magicLinkToken = this.authService.generateMagicLinkToken(
+      client.email,
+      client.id.toString()
     );
+    await this.authService.sendMagicLink(client.email, magicLinkToken);
 
-    if (!isPasswordValid) {
-      return left(new WrongCredentialsError());
-    }
-
-    const accessToken = await this.encrypter.encrypt({
-      sub: client.id.toString(),
-      role: client.role,
-    });
-
-    return right({ accessToken });
+    return right({});
   }
 }

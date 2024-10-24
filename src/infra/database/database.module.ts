@@ -6,6 +6,8 @@ import { ServicesRepository } from "@/domain/barbershop/application/repositories
 import { PrismaServicesRepository } from "./prisma/repositories/prisma-services-repository";
 import { ProductsRepository } from "@/domain/barbershop/application/repositories/products-repository";
 import { PrismaProductsRepository } from "./prisma/repositories/prisma-products-repository";
+import { ClientsRepository } from "@/domain/barbershop/application/repositories/clients-repository";
+import { PrismaClientsRepository } from "./prisma/repositories/prisma-clients-repository";
 
 @Module({
   imports: [],
@@ -23,12 +25,17 @@ import { PrismaProductsRepository } from "./prisma/repositories/prisma-products-
       provide: ProductsRepository,
       useClass: PrismaProductsRepository,
     },
+    {
+      provide: ClientsRepository,
+      useClass: PrismaClientsRepository,
+    },
   ],
   exports: [
     PrismaService,
     BarbersRepository,
     ServicesRepository,
     ProductsRepository,
+    ClientsRepository,
   ],
 })
 export class DatabaseModule {}

@@ -10,29 +10,25 @@ import { z } from "zod";
 import { Public } from "@/infra/auth/public";
 import { ZodValidationPipe } from "../../pipes/zod-validation-pipe";
 import { WrongCredentialsError } from "@/core/errors/wrong-credentials";
-import { AuthenticateBarberUseCase } from "@/domain/barbershop/application/use-cases/barber/authenticate-barber";
+import { AuthenticateClientUseCase } from "@/domain/barbershop/application/use-cases/clients/authenticate-client";
 
 const authenticateBodySchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
 });
 
 type AuthenticateBodySchema = z.infer<typeof authenticateBodySchema>;
 
-@Controller("/barber/sessions")
+@Controller("/client/sessions")
 @Public()
-export class AuthenticateBarberController {
-  constructor(private authenticateBarber: AuthenticateBarberUseCase) {}
+export class AuthenticateClientController {
+  constructor(private readonly authenticateClient: AuthenticateClientUseCase) {}
 
   @Post()
   @UsePipes(new ZodValidationPipe(authenticateBodySchema))
   async handle(@Body() body: AuthenticateBodySchema) {
-    const { email, password } = body;
+    const { email } = body;
 
-    const result = await this.authenticateBarber.execute({
-      email,
-      password,
-    });
+    const result = await this.authenticateClient.execute({ email });
 
     if (result.isLeft()) {
       const error = result.value;
@@ -45,10 +41,8 @@ export class AuthenticateBarberController {
       }
     }
 
-    const { accessToken } = result.value;
-
     return {
-      access_token: accessToken,
+      message: "Um link de acesso foi enviado para o seu e-mail!",
     };
   }
 }

@@ -6,6 +6,8 @@ import { JwtStrategy } from "./jwt.strategy";
 import { Env } from "../env";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtAuthGuard } from "./jwt-auth.guard";
+import { MailService } from "../email/email.service";
+import { AuthService } from "./auth.service";
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { JwtAuthGuard } from "./jwt-auth.guard";
         const publicKey = config.get("JWT_PUBLIC_KEY", { infer: true });
 
         return {
-          signOptions: { algorithm: "RS256" },
+          signOptions: { algorithm: "RS256", expiresIn: "3d" },
           privateKey: Buffer.from(privateKey, "base64"),
           publicKey: Buffer.from(publicKey, "base64"),
         };
@@ -31,6 +33,9 @@ import { JwtAuthGuard } from "./jwt-auth.guard";
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    MailService,
+    AuthService,
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -7,7 +7,7 @@ import { GetBarberByIdController } from "./controllers/barber/find-barber-by-id.
 import { FindBarberByIdUseCase } from "@/domain/barbershop/application/use-cases/barber/find-barber-by-id";
 import { UpdateBarberController } from "./controllers/barber/update-barber.controller";
 import { UpdateBarberUseCase } from "@/domain/barbershop/application/use-cases/barber/update-barber";
-import { AuthenticateController } from "./controllers/barber/authenticate-barber.controller";
+import { AuthenticateBarberController } from "./controllers/barber/authenticate-barber.controller";
 import { AuthenticateBarberUseCase } from "@/domain/barbershop/application/use-cases/barber/authenticate-barber";
 import { CreateServiceController } from "./controllers/service/create-service.controller";
 import { CreateServiceUseCase } from "@/domain/barbershop/application/use-cases/services/create-service";
@@ -29,14 +29,32 @@ import { FetchProductsController } from "./controllers/product/fetch-product.con
 import { FetchProductsUseCase } from "@/domain/barbershop/application/use-cases/products/fetch-products";
 import { FindProductByIdUseCase } from "@/domain/barbershop/application/use-cases/products/find-product-by-id";
 import { GetProductByIdController } from "./controllers/product/find-product-by-id.controller";
+import { AuthenticateClientController } from "./controllers/client/authenticate-client.controller";
+import { AuthenticateClientUseCase } from "@/domain/barbershop/application/use-cases/clients/authenticate-client";
+import { AuthModule } from "../auth/auth.module";
+import { VerifyMagicLinkController } from "./controllers/client/verify-magic-link.controller";
+import { CompleteClientRegistrationController } from "./controllers/client/complete-client-registration.controller";
+import { CompleteClientRegistrationUseCase } from "@/domain/barbershop/application/use-cases/clients/complete-client-registration";
+import { RegisterClientController } from "./controllers/client/register-client-with-magic-link.controller";
+import { RegisterClientWithMagicLinkUseCase } from "@/domain/barbershop/application/use-cases/clients/register-client-with-magic-link";
+import { DeleteClientController } from "./controllers/client/delete-client.controller";
+import { DeleteClientUseCase } from "@/domain/barbershop/application/use-cases/clients/delete-client";
+import { FetchClientsController } from "./controllers/client/fetch-client.controller";
+import { FetchClientsUseCase } from "@/domain/barbershop/application/use-cases/clients/fetch-clients";
+import { GetClientByIdController } from "./controllers/client/find-client-by-id.controller";
+import { FindClientByIdUseCase } from "@/domain/barbershop/application/use-cases/clients/find-client-by-id";
+import { UpdateClientController } from "./controllers/client/update-client.controller";
+import { UpdateClientUseCase } from "@/domain/barbershop/application/use-cases/clients/update-client";
+import { UpdateClientRoleController } from "./controllers/barber/toggle-client-role.controller";
+import { ToggleClientRole } from "@/domain/barbershop/application/use-cases/clients/toggle-client-role";
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule],
+  imports: [DatabaseModule, CryptographyModule, AuthModule],
   controllers: [
     CreateBarberAccountController,
     GetBarberByIdController,
     UpdateBarberController,
-    AuthenticateController,
+    AuthenticateBarberController,
     CreateServiceController,
     DeleteServiceController,
     FetchServicesController,
@@ -47,6 +65,15 @@ import { GetProductByIdController } from "./controllers/product/find-product-by-
     UpdateProductController,
     FetchProductsController,
     GetProductByIdController,
+    AuthenticateClientController,
+    RegisterClientController,
+    CompleteClientRegistrationController,
+    VerifyMagicLinkController,
+    DeleteClientController,
+    FetchClientsController,
+    GetClientByIdController,
+    UpdateClientController,
+    UpdateClientRoleController,
   ],
   providers: [
     CreateBarberUseCase,
@@ -63,6 +90,14 @@ import { GetProductByIdController } from "./controllers/product/find-product-by-
     UpdateProductUseCase,
     FetchProductsUseCase,
     FindProductByIdUseCase,
+    RegisterClientWithMagicLinkUseCase,
+    CompleteClientRegistrationUseCase,
+    AuthenticateClientUseCase,
+    DeleteClientUseCase,
+    FetchClientsUseCase,
+    FindClientByIdUseCase,
+    UpdateClientUseCase,
+    ToggleClientRole,
   ],
 })
 export class HttpModule {}

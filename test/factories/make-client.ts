@@ -3,25 +3,36 @@ import {
   Client,
   ClientProps,
 } from "@/domain/barbershop/enterprise/entities/client";
-import { CPF } from "@/domain/barbershop/enterprise/entities/value-objects/cpf";
 import { faker } from "@faker-js/faker";
 
 export function makeClient(
   override: Partial<ClientProps> = {},
   id?: UniqueEntityId
 ) {
+  const formattedCpf = formatCpf(faker.string.numeric(11));
+  const formattedPhone = formatPhone(faker.string.numeric(11));
+
   const client = Client.create(
     {
       fullName: faker.person.fullName(),
       nickName: faker.person.middleName(),
-      phone: faker.string.numeric(11),
-      cpf: CPF.create(faker.string.numeric(11)),
+      phone: formattedPhone,
+      cpf: formattedCpf,
       email: faker.internet.email(),
-      password: faker.internet.password(),
       ...override,
     },
     id
   );
 
   return client;
+}
+
+function formatCpf(cpf: string): string {
+  const digitsOnly = cpf.replace(/\D/g, "");
+  return digitsOnly.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
+
+function formatPhone(phone: string): string {
+  const digitsOnly = phone.replace(/\D/g, "");
+  return digitsOnly.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
 }

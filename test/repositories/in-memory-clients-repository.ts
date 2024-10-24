@@ -44,7 +44,7 @@ export class InMemoryClientsRepository implements ClientsRepository {
   }
 
   async findByCpf(cpf: string) {
-    const client = this.items.find((item) => item.cpf.value === cpf);
+    const client = this.items.find((item) => item.cpf === cpf);
 
     if (!client) {
       return null;
