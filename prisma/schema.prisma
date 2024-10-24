@@ -62,10 +62,9 @@ model Client {
   role       ClientRole @default(CLIENT)
   fullName   String
   nickName   String
-  phone      String
+  phone      String     @unique
   cpf        String     @unique
   email      String     @unique
-  password   String
   billingDay Int
   createdAt  DateTime   @default(now()) @map("created_at")
   updatedAt  DateTime?  @updatedAt @map("updated_at")
@@ -114,7 +113,7 @@ model Product {
   id        String    @id @default(uuid())
   name      String
   price     Float
-  Quantity  Int
+  quantity  Int
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 }

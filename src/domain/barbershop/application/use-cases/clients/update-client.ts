@@ -16,7 +16,6 @@ interface UpdateClientUseCaseRequest {
   nickName?: string;
   phone?: string;
   email?: string;
-  password?: string;
   billingDay?: number;
 }
 
@@ -31,10 +30,7 @@ type UpdateClientUseCaseResponse = Either<
 
 @Injectable()
 export class UpdateClientUseCase {
-  constructor(
-    private clientsRepository: ClientsRepository,
-    private hashGenerator: HashGenerator
-  ) {}
+  constructor(private clientsRepository: ClientsRepository) {}
 
   async execute({
     clientId,
@@ -42,7 +38,6 @@ export class UpdateClientUseCase {
     nickName,
     phone,
     email,
-    password,
     billingDay,
   }: UpdateClientUseCaseRequest): Promise<UpdateClientUseCaseResponse> {
     const client = await this.clientsRepository.findById(clientId.toString());
@@ -81,11 +76,6 @@ export class UpdateClientUseCase {
 
     if (billingDay && client.billingDay !== billingDay)
       client.billingDay = billingDay;
-
-    if (password) {
-      const password_hash = await this.hashGenerator.hash(password);
-      client.password = password_hash;
-    }
 
     await this.clientsRepository.save(client);
 

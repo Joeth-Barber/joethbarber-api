@@ -1,18 +1,15 @@
 import { InMemoryClientsRepository } from "test/repositories/in-memory-clients-repository";
-import { FakeHasher } from "test/cryptography/fake-hasher";
 import { makeClient } from "test/factories/make-client";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { UpdateClientUseCase } from "./update-client";
 
 let inMemoryClientsRepository: InMemoryClientsRepository;
-let fakeHasher: FakeHasher;
 let sut: UpdateClientUseCase;
 
 describe("Update Client", () => {
   beforeEach(() => {
     inMemoryClientsRepository = new InMemoryClientsRepository();
-    fakeHasher = new FakeHasher();
-    sut = new UpdateClientUseCase(inMemoryClientsRepository, fakeHasher);
+    sut = new UpdateClientUseCase(inMemoryClientsRepository);
   });
 
   it("should be able to update a client", async () => {
@@ -33,7 +30,6 @@ describe("Update Client", () => {
       nickName: "dododo",
       phone: "11933986562",
       email: "douglas@outlook.com",
-      password: "123456",
       billingDay: 10,
     });
 

@@ -3,16 +3,14 @@ import { UniqueEntityId } from "src/core/entities/unique-entity-id";
 import { Payment } from "./payment";
 import { Booking } from "./booking";
 import { Optional } from "src/core/types/optional";
-import { CPF } from "./value-objects/cpf";
 
 export interface ClientProps {
   role: "CLIENT" | "MENSALIST";
   fullName: string;
   nickName: string;
   phone: string;
-  cpf: CPF;
+  cpf: string;
   email: string;
-  password: string;
   billingDay: number; // dia do mês. Ex: 10
   payments: Payment[];
   bookings: Booking[];
@@ -67,15 +65,6 @@ export class Client extends Entity<ClientProps> {
 
   set email(email: string) {
     this.props.email = email;
-    this.touch();
-  }
-
-  get password() {
-    return this.props.password;
-  }
-
-  set password(password: string) {
-    this.props.password = password;
     this.touch();
   }
 

@@ -9,10 +9,9 @@ import { NotAllowedError } from "@/core/errors/not-allowed";
 
 interface UpdateProductUseCaseRequest {
   productId: UniqueEntityId;
-  barberId: UniqueEntityId;
-  name: string;
-  price: number;
-  quantity: number;
+  name?: string;
+  price?: number;
+  quantity?: number;
 }
 
 type UpdateProductUseCaseResponse = Either<
@@ -29,21 +28,10 @@ export class UpdateProductUseCase {
 
   async execute({
     productId,
-    barberId,
     name,
     price,
     quantity,
   }: UpdateProductUseCaseRequest): Promise<UpdateProductUseCaseResponse> {
-    const barber = await this.barbersRepository.findById(barberId.toString());
-
-    if (!barber) {
-      return left(new ResourceNotFoundError());
-    }
-
-    if (barber.role !== "ADMIN") {
-      return left(new NotAllowedError());
-    }
-
     const product = await this.productsRepository.findById(
       productId.toString()
     );

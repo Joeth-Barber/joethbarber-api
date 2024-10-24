@@ -10,12 +10,12 @@ import { ZodValidationPipe } from "../../pipes/zod-validation-pipe";
 import { z } from "zod";
 import { UpdateServiceUseCase } from "@/domain/barbershop/application/use-cases/services/update-service";
 
-const UpdateBarberBodySchema = z.object({
+const UpdateServiceBodySchema = z.object({
   name: z.string().optional(),
   price: z.number().optional(),
 });
 
-type UpdateBarberBodySchema = z.infer<typeof UpdateBarberBodySchema>;
+type UpdateServiceBodySchema = z.infer<typeof UpdateServiceBodySchema>;
 
 @Controller("/update/service/:serviceId")
 export class UpdateServiceController {
@@ -23,8 +23,8 @@ export class UpdateServiceController {
 
   @Put()
   async handle(
-    @Body(new ZodValidationPipe(UpdateBarberBodySchema))
-    body: UpdateBarberBodySchema,
+    @Body(new ZodValidationPipe(UpdateServiceBodySchema))
+    body: UpdateServiceBodySchema,
     @Param("serviceId") serviceId: string
   ) {
     const { name, price } = body;
