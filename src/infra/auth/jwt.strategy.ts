@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { z } from "zod";
 import { Env } from "../env";
 
-const tokenPayloadSchema = z.object({
+export const tokenPayloadSchema = z.object({
   sub: z.string().uuid(),
 });
 
