@@ -54,7 +54,6 @@ describe("Create Payment", () => {
                   endTime: "13:00",
                 },
               ],
-              status: true,
             },
           ],
         },

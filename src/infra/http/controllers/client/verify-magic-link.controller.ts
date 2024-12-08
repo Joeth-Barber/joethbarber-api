@@ -25,36 +25,27 @@ export class VerifyMagicLinkController {
     }
 
     const { email } = this.authService.verifyMagicLinkToken(token);
-
-    res.cookie("auth_token", JSON.stringify({ token }), {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 72, // 3 dias
-    });
-
     const client = await this.clientsRepository.findByEmail(email);
 
     if (client) {
-      res.cookie(
-        "client_infos",
-        JSON.stringify({
+      return res.status(200).send({
+        action: "authenticate",
+        message: "Usuário autenticado com sucesso!",
+        authToken: token, // Retorna o token
+        clientInfos: {
           client_id: client.id.toString(),
           client_role: client.role,
+          client_fullname: client.fullName,
           client_email: client.email,
-        }),
-        {
-          httpOnly: false,
-          maxAge: 1000 * 60 * 60 * 72, // 3 dias
-          sameSite: "lax",
-        }
-      );
+        },
+      });
     } else {
-      return res.status(302).send({
+      return res.status(200).send({
+        action: "redirect",
         message: "Redirect to complete registration",
+        authToken: token,
+        email,
       });
     }
-
-    return res.status(200).send({
-      message: "Usuário autenticado com sucesso!",
-    });
   }
 }

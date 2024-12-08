@@ -15,8 +15,8 @@ export class AuthService {
   }
 
   async sendMagicLink(email: string, token: string): Promise<void> {
-    // passar abaixo a URL do frontend (http://meusite.com/verify?token=<token>) fazendo um GET para a rota (/client/sessions/verify) passando o token como query param
-    const magicLink = `http://localhost:3333/client/sessions/verify?token=${token}`;
+    // Passar o email como um parâmetro de consulta no magic link
+    const magicLink = `http://localhost:5173/client/sessions/verify?token=${token}`;
     await this.mailService.sendMagicLink(email, magicLink);
   }
 

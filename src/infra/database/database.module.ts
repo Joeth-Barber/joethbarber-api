@@ -8,6 +8,12 @@ import { ProductsRepository } from "@/domain/barbershop/application/repositories
 import { PrismaProductsRepository } from "./prisma/repositories/prisma-products-repository";
 import { ClientsRepository } from "@/domain/barbershop/application/repositories/clients-repository";
 import { PrismaClientsRepository } from "./prisma/repositories/prisma-clients-repository";
+import { WorkSchedulesRepository } from "@/domain/barbershop/application/repositories/work-schedules-repository";
+import { PrismaWorkSchedulesRepository } from "./prisma/repositories/prisma-work-schedule-repository";
+import { BookingsRepository } from "@/domain/barbershop/application/repositories/bookings-repository";
+import { PrismaBookingsRepository } from "./prisma/repositories/prisma-bookings-repository";
+import { PaymentsRepository } from "@/domain/barbershop/application/repositories/payments-repository";
+import { PrismaPaymentsRepository } from "./prisma/repositories/prisma-payments-repository";
 
 @Module({
   imports: [],
@@ -29,6 +35,18 @@ import { PrismaClientsRepository } from "./prisma/repositories/prisma-clients-re
       provide: ClientsRepository,
       useClass: PrismaClientsRepository,
     },
+    {
+      provide: WorkSchedulesRepository,
+      useClass: PrismaWorkSchedulesRepository,
+    },
+    {
+      provide: BookingsRepository,
+      useClass: PrismaBookingsRepository,
+    },
+    {
+      provide: PaymentsRepository,
+      useClass: PrismaPaymentsRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -36,6 +54,9 @@ import { PrismaClientsRepository } from "./prisma/repositories/prisma-clients-re
     ServicesRepository,
     ProductsRepository,
     ClientsRepository,
+    WorkSchedulesRepository,
+    BookingsRepository,
+    PaymentsRepository,
   ],
 })
 export class DatabaseModule {}

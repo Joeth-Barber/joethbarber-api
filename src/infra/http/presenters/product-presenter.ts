@@ -1,4 +1,5 @@
 import { Product } from "@/domain/barbershop/enterprise/entities/product";
+import { format } from "date-fns";
 
 export class ProductPresenter {
   static toHTTP(product: Product) {
@@ -7,7 +8,8 @@ export class ProductPresenter {
       name: product.name,
       price: product.price,
       quantity: product.quantity,
-      createdAt: product.createdAt,
+      // createdAt: format(product.createdAt, "dd/MM/yyyy"),
+      // updatedAt: product.updatedAt,
     };
   }
 }

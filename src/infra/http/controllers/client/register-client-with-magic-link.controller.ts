@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  HttpCode,
   Post,
   UsePipes,
 } from "@nestjs/common";
@@ -25,6 +26,7 @@ export class RegisterClientController {
   ) {}
 
   @Post()
+  @HttpCode(200)
   @UsePipes(new ZodValidationPipe(registerBodySchema))
   async handle(@Body() body: RegisterBodySchema) {
     const { email } = body;

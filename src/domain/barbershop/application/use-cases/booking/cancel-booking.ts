@@ -4,12 +4,12 @@ import { Either, left, right } from "@/core/either";
 import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found";
 import { BookingTooCloseToStartError } from "@/core/errors/booking-too-close-to-start";
-import { NotAllowedError } from "@/core/errors/not-allowed";
 import { WorkSchedulesRepository } from "../../repositories/work-schedules-repository";
 import { format } from "date-fns";
 import { ClientsRepository } from "../../repositories/clients-repository";
 import { PaymentsRepository } from "../../repositories/payments-repository";
 import { Booking } from "@/domain/barbershop/enterprise/entities/booking";
+import { BookingGateway } from "@/infra/http/ws/booking-gateway";
 
 interface CancelBookingUseCaseRequest {
   bookingId: UniqueEntityId;
@@ -27,7 +27,8 @@ export class CancelBookingUseCase {
     private bookingsRepository: BookingsRepository,
     private clientsRepository: ClientsRepository,
     private paymentsRepository: PaymentsRepository,
-    private workSchedulesRepository: WorkSchedulesRepository
+    private workSchedulesRepository: WorkSchedulesRepository,
+    private bookingGateway: BookingGateway
   ) {}
 
   async execute({
@@ -46,10 +47,6 @@ export class CancelBookingUseCase {
 
     if (!booking) {
       return left(new ResourceNotFoundError());
-    }
-
-    if (booking.clientId.toString() !== clientId.toString()) {
-      return left(new NotAllowedError());
     }
 
     const now = new Date();
@@ -84,15 +81,6 @@ export class CancelBookingUseCase {
       }
     }
 
-    if (client.role === "CLIENT") {
-      const payment = await this.paymentsRepository.findByBookingId(
-        bookingId.toString()
-      );
-      if (payment) {
-        await this.paymentsRepository.delete(payment);
-      }
-    }
-
     const workSchedule = await this.workSchedulesRepository.findById(
       booking.workScheduleId.toString()
     );
@@ -112,6 +100,11 @@ export class CancelBookingUseCase {
         workDay.availableHours.sort();
       }
     }
+
+    this.bookingGateway.notifyAvailableHoursUpdate(
+      booking.workScheduleId.toString(),
+      workDay?.availableHours || []
+    );
 
     await this.workSchedulesRepository.save(workSchedule);
 

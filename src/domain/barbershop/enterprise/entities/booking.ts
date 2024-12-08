@@ -66,7 +66,7 @@ export class Booking extends Entity<BookingProps> {
     return this.props.products;
   }
 
-  set product(products: Product[]) {
+  set products(products: Product[]) {
     this.props.products = products;
     this.touch();
   }

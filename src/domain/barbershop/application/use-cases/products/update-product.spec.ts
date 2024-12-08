@@ -45,7 +45,6 @@ describe("Update Product", () => {
 
     const result = await sut.execute({
       productId: new UniqueEntityId("product-01"),
-      barberId: new UniqueEntityId("barber-01"),
       name: "Cerveja Brahma",
       price: 5.0,
       quantity: 10,

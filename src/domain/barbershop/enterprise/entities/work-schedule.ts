@@ -3,18 +3,21 @@ import { UniqueEntityId } from "src/core/entities/unique-entity-id";
 import { Optional } from "src/core/types/optional";
 
 export interface Break {
+  id?: UniqueEntityId;
   title: string;
   startTime: string; // HH:mm
   endTime: string; // HH:mm
 }
 
 export interface WorkDay {
+  id?: UniqueEntityId;
   dayOfWeek: number; // 0 domingo - 6 sábado
+  date: string;
   startTime: string; // HH:mm
   endTime: string; // HH:mm
   breaks?: Break[];
+  visible?: boolean;
   availableHours?: string[];
-  status: boolean;
 }
 
 export interface WorkScheduleProps {
