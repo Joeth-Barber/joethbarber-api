@@ -44,29 +44,15 @@ export class CompleteClientRegistrationController {
     if (result.isRight()) {
       const { token, client } = result.value;
 
-      res.cookie("auth_token", JSON.stringify({ token }), {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 72, // 3 dias
-        sameSite: "lax",
-      });
-
-      res.cookie(
-        "client_infos",
-        JSON.stringify({
-          client_id: client.id.toString(),
-          client_role: client.role,
-          client_email: client.email,
-        }),
-        {
-          httpOnly: false,
-          maxAge: 1000 * 60 * 60 * 72, // 3 dias
-          sameSite: "lax",
-        }
-      );
-
-      // Envia a resposta final
       return res.send({
         message: "Usuário registrado com sucesso!",
+        authToken: token,
+        clientInfos: {
+          client_id: client.id.toString(),
+          client_role: client.role,
+          client_fullname: client.fullName,
+          client_email: client.email,
+        },
       });
     } else {
       const error = result.value;

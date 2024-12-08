@@ -46,10 +46,6 @@ export class UpdateClientUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    if (client.id.toString() !== clientId.toString()) {
-      return left(new NotAllowedError());
-    }
-
     if (phone && phone !== client.phone) {
       const phoneAlreadyExists = await this.clientsRepository.findByPhone(
         phone

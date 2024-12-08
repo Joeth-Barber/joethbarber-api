@@ -13,10 +13,7 @@ describe("Delete Service", () => {
   beforeEach(() => {
     inMemoryServicesRepository = new InMemoryServicesRepository();
     inMemoryBarbersRepository = new InMemoryBarbersRepository();
-    sut = new DeleteServiceUseCase(
-      inMemoryServicesRepository,
-      inMemoryBarbersRepository
-    );
+    sut = new DeleteServiceUseCase(inMemoryServicesRepository);
   });
 
   it("should be able to delete a service", async () => {
@@ -38,7 +35,6 @@ describe("Delete Service", () => {
 
     const result = await sut.execute({
       serviceId: new UniqueEntityId("service-01"),
-      barberId: new UniqueEntityId("barber-01"),
     });
 
     expect(result.isRight()).toBe(true);

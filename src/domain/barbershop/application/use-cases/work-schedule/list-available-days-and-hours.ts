@@ -42,22 +42,15 @@ export class FetchAvailableDaysAndHoursUseCase {
     }
 
     const isMensalist = client.role === "MENSALIST";
-    const canClientView =
-      workSchedule.status === "ACTIVE" &&
-      (isMensalist ||
-        (workSchedule.allowClientsToView && workSchedule.status === "ACTIVE"));
+    let availableDaysAndHours: WorkDay[] = [];
 
-    const availableDaysAndHours = canClientView
-      ? workSchedule.workDays
-      : this.setWorkDaysStatusToFalse(workSchedule.workDays);
+    if (workSchedule.status === "ACTIVE") {
+      availableDaysAndHours = workSchedule.workDays.map((workDay) => ({
+        ...workDay,
+        visible: isMensalist || workSchedule.allowClientsToView,
+      }));
+    }
 
     return right({ availableDaysAndHours });
-  }
-
-  private setWorkDaysStatusToFalse(workDays: WorkDay[]): WorkDay[] {
-    return workDays.map((workDay) => {
-      workDay.status = false;
-      return workDay;
-    });
   }
 }

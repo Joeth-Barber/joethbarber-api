@@ -1,4 +1,5 @@
 import { Barber } from "@/domain/barbershop/enterprise/entities/barber";
+import { format } from "date-fns";
 
 export class BarberPresenter {
   static toHTTP(barber: Barber) {
@@ -7,8 +8,8 @@ export class BarberPresenter {
       role: barber.role,
       fullName: barber.fullName,
       email: barber.email,
-      createdAt: barber.createdAt,
-      updatedAt: barber.updatedAt,
+      // createdAt: format(barber.createdAt, "dd/MM/yyyy"),
+      // updatedAt: barber.updatedAt,
     };
   }
 }

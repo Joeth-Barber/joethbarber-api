@@ -47,9 +47,30 @@ import { UpdateClientController } from "./controllers/client/update-client.contr
 import { UpdateClientUseCase } from "@/domain/barbershop/application/use-cases/clients/update-client";
 import { UpdateClientRoleController } from "./controllers/barber/toggle-client-role.controller";
 import { ToggleClientRole } from "@/domain/barbershop/application/use-cases/clients/toggle-client-role";
+import { CreateWorkScheduleController } from "./controllers/workSchedule/create-work-schedule.controller";
+import { CreateWorkScheduleUseCase } from "@/domain/barbershop/application/use-cases/work-schedule/create-work-schedule";
+import { ListAvailableDaysAndHoursController } from "./controllers/workSchedule/list-available-days-and-hours.controller";
+import { FetchAvailableDaysAndHoursUseCase } from "@/domain/barbershop/application/use-cases/work-schedule/list-available-days-and-hours";
+import { ToggleWorkScheduleStatusController } from "./controllers/workSchedule/toggle-work-schedule-status.controller";
+import { ToggleWorkScheduleStatusUseCase } from "@/domain/barbershop/application/use-cases/work-schedule/toggle-work-schedule-status";
+import { CreateBookingController } from "./controllers/booking/create-booking.controller";
+import { CreateBookingUseCase } from "@/domain/barbershop/application/use-cases/booking/create-booking";
+import { CancelBookingController } from "./controllers/booking/cancel-booking.controller";
+import { CancelBookingUseCase } from "@/domain/barbershop/application/use-cases/booking/cancel-booking";
+import { FetchClientBookingsUseCase } from "@/domain/barbershop/application/use-cases/booking/fetch-bookings-by-client-id";
+import { FetchClientBookingsController } from "./controllers/booking/fetch-client-bookings.controller";
+import { FetchBookingsController } from "./controllers/booking/fetch-bookings.controller";
+import { FetchBookingsUseCase } from "@/domain/barbershop/application/use-cases/booking/fetch-bookings";
+import { FindBookingByIdUseCase } from "@/domain/barbershop/application/use-cases/booking/find-booking-by-id";
+import { GetBookingByIdController } from "./controllers/booking/find-booking-by-id.controller";
+import { UpdateBookingController } from "./controllers/booking/update-booking.controller";
+import { UpdateBookingUseCase } from "@/domain/barbershop/application/use-cases/booking/update-booking";
+import { FindActiveWorkScheduleUseCase } from "@/domain/barbershop/application/use-cases/work-schedule/find-active-work-schedule";
+import { FindActiveWorkScheduleController } from "./controllers/workSchedule/find-active-work-schedule.controller";
+import { WebSocketModule } from "./ws/websocket.module";
 
 @Module({
-  imports: [DatabaseModule, CryptographyModule, AuthModule],
+  imports: [DatabaseModule, CryptographyModule, AuthModule, WebSocketModule],
   controllers: [
     CreateBarberAccountController,
     GetBarberByIdController,
@@ -74,6 +95,16 @@ import { ToggleClientRole } from "@/domain/barbershop/application/use-cases/clie
     GetClientByIdController,
     UpdateClientController,
     UpdateClientRoleController,
+    CreateWorkScheduleController,
+    ListAvailableDaysAndHoursController,
+    ToggleWorkScheduleStatusController,
+    CreateBookingController,
+    CancelBookingController,
+    FetchClientBookingsController,
+    FetchBookingsController,
+    GetBookingByIdController,
+    UpdateBookingController,
+    FindActiveWorkScheduleController,
   ],
   providers: [
     CreateBarberUseCase,
@@ -98,6 +129,16 @@ import { ToggleClientRole } from "@/domain/barbershop/application/use-cases/clie
     FindClientByIdUseCase,
     UpdateClientUseCase,
     ToggleClientRole,
+    CreateWorkScheduleUseCase,
+    FetchAvailableDaysAndHoursUseCase,
+    ToggleWorkScheduleStatusUseCase,
+    CreateBookingUseCase,
+    CancelBookingUseCase,
+    FetchClientBookingsUseCase,
+    FetchBookingsUseCase,
+    FindBookingByIdUseCase,
+    UpdateBookingUseCase,
+    FindActiveWorkScheduleUseCase,
   ],
 })
 export class HttpModule {}

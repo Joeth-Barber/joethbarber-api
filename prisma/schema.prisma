@@ -49,12 +49,33 @@ model WorkSchedule {
   id                 String             @id @default(uuid())
   barber             Barber             @relation("BarberToWorkSchedules", fields: [barberId], references: [id])
   barberId           String
-  workDays           Json
+  workDays           WorkDay[]          @relation("ScheduleToWorkDays")
   status             WorkScheduleStatus @default(DISABLED)
   allowClientsToView Boolean            @default(false)
   createdAt          DateTime           @default(now()) @map("created_at")
   activatedAt        DateTime?          @map("activated_at")
   updatedAt          DateTime?          @updatedAt @map("updated_at")
+}
+
+model WorkDay {
+  id             String       @id @default(uuid())
+  workSchedule   WorkSchedule @relation("ScheduleToWorkDays", fields: [workScheduleId], references: [id], onDelete: Cascade)
+  workScheduleId String
+  dayOfWeek      Int
+  date           String
+  startTime      String
+  endTime        String
+  breaks         Break[]      @relation("WorkDayToBreaks")
+  availableHours String[]
+}
+
+model Break {
+  id        String  @id @default(uuid())
+  workDay   WorkDay @relation("WorkDayToBreaks", fields: [workDayId], references: [id], onDelete: Cascade)
+  workDayId String
+  title     String
+  startTime String
+  endTime   String
 }
 
 model Client {
@@ -81,11 +102,13 @@ model Booking {
   date           DateTime
   totalPrice     Float
   description    String
-  services       Json
-  products       Json
+  services       Service[]     @relation("BookingServices")
+  products       Product[]     @relation("BookingProducts")
   status         BookingStatus @default(PENDING)
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime?     @updatedAt @map("updated_at")
+
+  payments Payment[] @relation("PaymentBookings")
 }
 
 model Payment {
@@ -94,8 +117,8 @@ model Payment {
   clientId    String
   amount      Float
   status      PaymentStatus @default(PENDING)
-  bookings    Json
-  products    Json
+  bookings    Booking[]     @relation("PaymentBookings")
+  products    Product[]     @relation("PaymentProducts")
   paymentDate DateTime?
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime?     @updatedAt @map("updated_at")
@@ -107,6 +130,8 @@ model Service {
   price     Float
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+
+  bookings Booking[] @relation("BookingServices")
 }
 
 model Product {
@@ -116,4 +141,7 @@ model Product {
   quantity  Int
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+
+  bookings Booking[] @relation("BookingProducts")
+  payments Payment[] @relation("PaymentProducts")
 }

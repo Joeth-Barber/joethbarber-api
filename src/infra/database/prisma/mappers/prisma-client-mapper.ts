@@ -3,8 +3,10 @@ import { Client } from "@/domain/barbershop/enterprise/entities/client";
 import { Prisma, Client as PrismaClient } from "@prisma/client";
 
 export class PrismaClientMapper {
-  static toDomain(raw: PrismaClient): Client {
-    return Client.create(
+  static toDomain(
+    raw: PrismaClient & { bookings?: any[]; payments?: any[] }
+  ): Client {
+    const client = Client.create(
       {
         role: raw.role,
         fullName: raw.fullName,
@@ -13,9 +15,13 @@ export class PrismaClientMapper {
         cpf: raw.cpf,
         billingDay: raw.billingDay,
         email: raw.email,
+        bookings: raw.bookings || [],
+        payments: raw.payments || [],
       },
       new UniqueEntityId(raw.id)
     );
+
+    return client;
   }
 
   static toPrisma(client: Client): Prisma.ClientUncheckedCreateInput {

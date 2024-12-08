@@ -22,11 +22,18 @@ export class PrismaClientsRepository implements ClientsRepository {
 
   async findMany({ page }: PaginationParams): Promise<Client[]> {
     const clients = await this.prisma.client.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
       take: 10,
       skip: (page - 1) * 10,
+      include: {
+        bookings: {
+          include: {
+            services: true,
+            products: true,
+          },
+        },
+        payments: true,
+      },
     });
 
     return clients.map(PrismaClientMapper.toDomain);
@@ -47,6 +54,15 @@ export class PrismaClientsRepository implements ClientsRepository {
       where: {
         id,
       },
+      include: {
+        bookings: {
+          include: {
+            services: true,
+            products: true,
+          },
+        },
+        payments: true,
+      },
     });
 
     if (!client) {
@@ -60,6 +76,15 @@ export class PrismaClientsRepository implements ClientsRepository {
     const client = await this.prisma.client.findUnique({
       where: {
         phone,
+      },
+      include: {
+        bookings: {
+          include: {
+            services: true,
+            products: true,
+          },
+        },
+        payments: true,
       },
     });
 
@@ -75,6 +100,15 @@ export class PrismaClientsRepository implements ClientsRepository {
       where: {
         cpf,
       },
+      include: {
+        bookings: {
+          include: {
+            services: true,
+            products: true,
+          },
+        },
+        payments: true,
+      },
     });
 
     if (!client) {
@@ -88,6 +122,15 @@ export class PrismaClientsRepository implements ClientsRepository {
     const client = await this.prisma.client.findUnique({
       where: {
         email,
+      },
+      include: {
+        bookings: {
+          include: {
+            services: true,
+            products: true,
+          },
+        },
+        payments: true,
       },
     });
 

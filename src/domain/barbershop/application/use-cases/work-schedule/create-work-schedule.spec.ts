@@ -29,12 +29,19 @@ describe("Create Work Schedule", () => {
       barberId: new UniqueEntityId("barber-01"),
       workDays: [
         {
+          id: new UniqueEntityId(),
           dayOfWeek: 3,
           startTime: "09:00",
           endTime: "22:00",
-          breaks: [{ title: "Almoço", startTime: "12:00", endTime: "13:00" }],
+          breaks: [
+            {
+              id: new UniqueEntityId(),
+              title: "Almoço",
+              startTime: "12:00",
+              endTime: "13:00",
+            },
+          ],
           availableHours: [],
-          status: true,
         },
       ],
     });

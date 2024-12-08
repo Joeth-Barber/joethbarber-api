@@ -4,9 +4,10 @@ export class ServicePresenter {
   static toHTTP(service: Service) {
     return {
       id: service.id.toString(),
-      role: service.name,
+      name: service.name,
       price: service.price,
-      createdAt: service.createdAt,
+      // createdAt: format(service.createdAt, "dd/MM/yyyy"),
+      // updatedAt: service.updatedAt,
     };
   }
 }

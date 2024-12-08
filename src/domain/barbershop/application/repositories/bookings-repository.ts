@@ -8,7 +8,6 @@ export abstract class BookingsRepository {
     workScheduleId: UniqueEntityId,
     date: Date
   ): Promise<Booking | null>;
-  abstract findByDate(date: Date): Promise<Booking | null>;
   abstract findMany(params: PaginationParams): Promise<Booking[]>;
   abstract findManyByClientId(
     params: PaginationParams,
