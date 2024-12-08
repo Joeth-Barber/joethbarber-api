@@ -5,9 +5,12 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "18"
+  },
   "scripts": {
     "build": "nest build",
-    "start": "nest start",
+    "start": "node dist/src/infra/main.js",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -38,6 +41,7 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.1",
+    "tsup": "^8.3.5",
     "uuid": "^10.0.0",
     "zod": "^3.23.8",
     "zod-validation-error": "^3.3.0"
